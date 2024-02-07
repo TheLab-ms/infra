@@ -116,8 +116,6 @@ metadata:
   name: prom
   labels:
     app: prom
-  annotations:
-    reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
   strategy:
@@ -169,8 +167,6 @@ metadata:
   name: alertmgr
   labels:
     app: alertmgr
-  annotations:
-    reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
   strategy:
@@ -267,8 +263,6 @@ metadata:
   name: mikrotik-exporter
   labels:
     app: mikrotik-exporter
-  annotations:
-    reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
   selector:

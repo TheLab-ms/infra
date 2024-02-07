@@ -4,8 +4,6 @@ metadata:
   name: frigate
   labels:
     app: frigate
-  annotations:
-    reloader.stakater.com/auto: "true"
 spec:
   replicas: 1
   strategy:
