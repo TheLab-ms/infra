@@ -40,7 +40,10 @@ spec:
         - name: DOCUSEAL_URL
           value: https://docuseal.apps.thelab.ms
         - name: DOCUSEAL_TOKEN
-          value: e3wCWeKbKYScFWZ9baNMsb # this isn't really secret - it can't get anything
+          valueFrom:
+            secretKeyRef:
+              name: docuseal
+              key: token
         - name: STRIPE_KEY
           valueFrom:
             secretKeyRef:
