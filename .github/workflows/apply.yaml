@@ -11,6 +11,9 @@ jobs:
     container:
       image: docker.io/bitnami/kubectl:1.29.0
     steps:
+      - uses: actions/checkout@v3
+        name: Check out code
+
       - name: "Patch Image"
         run: |
           echo $KUBE_CONFIG | base64 -d > kc.yaml
@@ -18,4 +21,3 @@ jobs:
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
           NEW_IMAGE: ${{ needs.push.outputs.tag }}
-
