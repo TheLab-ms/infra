@@ -1,4 +1,4 @@
 .PHONY: apply
 apply:
-	kubectl apply --prune --all -f manifests
+	kubectl apply --prune --all --kustomize .
 

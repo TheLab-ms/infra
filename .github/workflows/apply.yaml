@@ -17,7 +17,7 @@ jobs:
       - name: "Patch Image"
         run: |
           echo $KUBE_CONFIG | base64 -d > kc.yaml
-          kubectl --kubeconfig kc.yaml apply --prune --all -f ./manifests
+          kubectl --kubeconfig kc.yaml apply --prune --all --kustomize .
         env:
           KUBE_CONFIG: ${{ secrets.KUBECONFIG }}
           NEW_IMAGE: ${{ needs.push.outputs.tag }}

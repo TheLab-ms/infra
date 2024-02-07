@@ -1,78 +1,6 @@
 # This file contains the Prometheus config along with various exporters
 
 apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: prom-config
-data:
-  prom.conf: |
-    global:
-      scrape_interval: 1m
-
-    scrape_configs:
-      - job_name: external-node-exporter
-        static_configs:
-          - labels: { "node": "tunnelsvr" }
-            targets: ['10.13.13.1:9100'] # through vpn tunnel
-
-      - job_name: homeassistant
-        metrics_path: /api/prometheus
-        static_configs:
-          - targets: ['10.200.10.50:8123']
-
-      - job_name: ingress-caddy
-        static_configs:
-          - targets: ['10.13.13.2:9101']
-
-      - job_name: k8s-nodes
-        scheme: https
-        metrics_path: /metrics/cadvisor
-        tls_config:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-        authorization:
-          credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-        kubernetes_sd_configs:
-          - role: node
-
-      - job_name: k8s-pods
-        scheme: http
-        tls_config:
-          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
-        authorization:
-          credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
-        kubernetes_sd_configs:
-          - role: pod
-        relabel_configs:
-        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
-          action: keep
-          regex: .*(prometheus|metrics|true).*
-        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
-          action: replace
-          target_label: __metrics_path__
-          regex: (.+)
-        - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
-          action: replace
-          regex: ([^:]+)(?::\d+)?;(\d+)
-          replacement: $1:$2
-          target_label: __address__
-        - source_labels: [__meta_kubernetes_pod_node_name]
-          target_label: node
-  alertmgr.conf: |
-    route:
-      receiver: discord
-      group_by: ['alertname', 'job']
-      group_wait: 10s
-      group_interval: 5m
-      repeat_interval: 3h
-
-    receivers:
-      - name: discord
-        discord_configs:
-        - webhook_url: https://discord.com/api/webhooks/1197034989209010286/wr75Ukk2PH5Oh4vhip4zHFW0rlXXc5-DlcYmmUJHQhnNqVdBuLBEefjoPfG50Zcx5aMd
-
----
-
-apiVersion: v1
 kind: Service
 metadata:
   name: prom
@@ -144,7 +72,7 @@ spec:
             mountPath: /durable
           - name: conf
             mountPath: /prometheus/prometheus.yml
-            subPath: prom.conf
+            subPath: prometheus.yml
         readinessProbe:
           initialDelaySeconds: 2
           periodSeconds: 5
@@ -155,56 +83,6 @@ spec:
         - name: storage
           hostPath:
             path: /opt/prom
-        - name: conf
-          configMap:
-            name: prom-config
-
----
-
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: alertmgr
-  labels:
-    app: alertmgr
-spec:
-  replicas: 1
-  strategy:
-    type: Recreate
-  selector:
-    matchLabels:
-      app: alertmgr
-  template:
-    metadata:
-      labels:
-        app: alertmgr
-    spec:
-      serviceAccountName: prom
-      securityContext:
-        runAsUser: 0
-        runAsGroup: 0
-      containers:
-      - name: alertmgr
-        image: quay.io/prometheus/alertmanager:v0.26.0
-        args:
-          - --config.file=/prometheus/alertmgr.yml
-          - --storage.path=/durable
-        volumeMounts:
-          - name: storage
-            mountPath: /durable
-          - name: conf
-            mountPath: /prometheus/alertmgr.yml
-            subPath: alertmgr.conf
-        readinessProbe:
-          initialDelaySeconds: 2
-          periodSeconds: 5
-          httpGet:
-            path: /-/ready
-            port: 9093
-      volumes:
-        - name: storage
-          hostPath:
-            path: /opt/alertmgr
         - name: conf
           configMap:
             name: prom-config

@@ -1,0 +1,16 @@
+resources:
+  - manifests/access-controller-controller.yaml
+  - manifests/docuseal.yaml
+  - manifests/frigate.yaml
+  - manifests/keycloak.yaml
+  - manifests/kubernetes-secret-generator.ext.yaml
+  - manifests/nvidia.ext.yaml
+  - manifests/profile-staging.yaml
+  - manifests/profile.yaml
+  - manifests/prom.yaml
+  - manifests/wikijs.yaml
+
+configMapGenerator:
+- name: prom-config
+  files:
+  - configs/prometheus.yml
