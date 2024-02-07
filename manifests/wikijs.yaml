@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wikijs
+  labels:
+    app: wikijs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wikijs
+  template:
+    metadata:
+      labels:
+        app: wikijs
+    spec:
+      containers:
+      - name: wikijs
+        image: docker.io/requarks/wiki@sha256:56000cf6a1df13bb9087897c4722fe25f4fd76491f92e746560e509b67e28a58
+        env:
+        - name: HA_ACTIVE
+          value: "true"
+        - name: DB_TYPE
+          value: "postgres"
+        - name: DB_USER
+          value: "postgres"
+        - name: DB_NAME
+          value: "postgres"
+        - name: DB_HOST
+          value: "10.200.10.13"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: wikijs
+              key: password
+        readinessProbe:
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            path: /healthz
+            port: 3000
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: wikijs
+spec:
+  type: ClusterIP
+  selector:
+      app: wikijs
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000

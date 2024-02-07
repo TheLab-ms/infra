@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docuseal
+  labels:
+    app: docuseal
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: docuseal
+  template:
+    metadata:
+      labels:
+        app: docuseal
+    spec:
+      containers:
+      - name: docuseal
+        image: docker.io/docuseal/docuseal@sha256:0e38d295c72f415ec647e8bfb52263703beb78ca725b2b67e52d0eb8e2bf1586
+        volumeMounts:
+          - name: storage
+            mountPath: /data
+        readinessProbe:
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            path: /
+            port: 3000
+      volumes:
+        - name: storage
+          hostPath:
+            path: /opt/docuseal
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: docuseal
+spec:
+  type: ClusterIP
+  selector:
+      app: docuseal
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 3000

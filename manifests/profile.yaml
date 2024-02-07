@@ -1,0 +1,216 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile
+  labels:
+    app: profile
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: profile
+  template:
+    metadata:
+      labels:
+        app: profile
+      annotations:
+        prometheus.io/port: "8081"
+        prometheus.io/path: /metrics
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - name: svc
+        # Image is set in the profile app's deploy github action
+        volumeMounts:
+          - name: keycloak-creds
+            mountPath: /var/lib/keycloak
+          - name: root-ca
+            mountPath: /etc/ssl/certs
+          - name: data
+            mountPath: /data
+        env:
+        - name: KEYCLOAK_URL
+          value: https://keycloak.apps.thelab.ms
+        - name: KEYCLOAK_MEMBERS_GROUP_ID
+          value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
+        - name: SELF_URL
+          value: https://profile.thelab.ms
+        - name: PAYPAL_CLIENT_ID
+          value: "AQVBErG_0lJAN5lhC_fSYUWvMjYpQrGxoCuO0jdAs7yiLVghlT0PpQflGIyL6DUAn5AFC_R9A0dHKkzu"
+        - name: DOCUSEAL_URL
+          value: https://docuseal.apps.thelab.ms
+        - name: DOCUSEAL_TOKEN
+          value: e3wCWeKbKYScFWZ9baNMsb # this isn't really secret - it can't get anything
+        - name: STRIPE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: stripe-creds
+              key: secret
+        - name: STRIPE_WEBHOOK_KEY
+          valueFrom:
+            secretKeyRef:
+              name: stripe-creds
+              key: webhook-key
+        - name: PAYPAL_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: stripe-creds
+              key: paypal-secret
+        - name: EVENT_PSQL_USERNAME
+          value: postgres
+        - name: EVENT_PSQL_ADDR
+          value: "10.200.10.18"
+        - name: EVENT_PSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: reporting-psql
+              key: password
+        - name: DISCORD_GUILD_ID
+          value: "690314626289631294"
+        - name: DISCORD_BOT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: discord-token
+              key: token
+        - name: AGE_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: web-secrets-keys
+              key: AGE_PRIVATE_KEY
+        - name: AGE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: web-secrets-keys
+              key: AGE_PUBLIC_KEY
+        - name: FILE_SERVER_URL
+          value: http://10.200.1.123:8888
+        - name: FILE_UPLOAD_DIR
+          value: /data
+        - name: FILE_TOKEN_SIGNING_KEY
+          valueFrom:
+            secretKeyRef:
+              name: profile-file-token-key
+              key: key
+        readinessProbe:
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            path: /health
+            port: 8080
+
+      - name: oauth2proxy
+        image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
+        volumeMounts:
+          - name: proxy-keycloak-creds
+            mountPath: /var/lib/keycloak
+        env:
+        - name: OAUTH2_PROXY_SKIP_AUTH_ROUTES
+          value: '.*(signup|assets|webhooks|events|\/f\/).*'
+        - name: OAUTH2_PROXY_UPSTREAMS
+          value: "http://127.0.0.1:8080"
+        - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
+          value: "true"
+        - name: OAUTH2_PROXY_SCOPE
+          value: "openid email profile"
+        - name: OAUTH2_PROXY_HTTP_ADDRESS
+          value: ":8082"
+        - name: OAUTH2_PROXY_REDIRECT_URL
+          value: "https://profile.thelab.ms/oauth2/callback"
+        - name: OAUTH2_PROXY_EMAIL_DOMAINS
+          value: "*"
+        - name: OAUTH2_PROXY_CLIENT_ID
+          value: "oauthproxy"
+        - name: OAUTH2_PROXY_PROVIDER
+          value: "keycloak-oidc"
+        - name: OAUTH2_PROXY_PASS_USER_HEADERS
+          value: "true"
+        - name: OAUTH2_PROXY_OIDC_ISSUER_URL
+          value: "https://keycloak.apps.thelab.ms/realms/master"
+        - name: OAUTH2_PROXY_CLIENT_SECRET_FILE
+          value: /var/lib/keycloak/client-secret
+        - name: OAUTH2_PROXY_COOKIE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: profile-oauth
+              key: cookie-secret
+        readinessProbe:
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            path: /ping
+            port: 8082
+
+      volumes:
+        - name: keycloak-creds
+          csi:
+            driver: identity.keycloak.org
+            volumeAttributes:
+              clientID: profile-app
+        - name: proxy-keycloak-creds
+          csi:
+            driver: identity.keycloak.org
+            volumeAttributes:
+              clientID: oauthproxy
+        - name: root-ca
+          hostPath:
+            path: /etc/ssl/certs/
+            type: Directory
+        - name: data
+          hostPath:
+            path: /opt/profile-data
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: profile
+spec:
+  type: ClusterIP
+  selector:
+      app: profile
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8082
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: profile-files
+spec:
+  type: LoadBalancer
+  selector:
+      app: profile
+  ports:
+    - name: http
+      protocol: TCP
+      port: 8888
+      targetPort: 8888
+
+---
+
+apiVersion: secretgenerator.mittwald.de/v1alpha1
+kind: StringSecret
+metadata:
+  name: profile-file-token-key
+spec:
+  fields:
+    - fieldName: "key"
+      encoding: "hex"
+      length: "32"
+
+---
+
+apiVersion: secretgenerator.mittwald.de/v1alpha1
+kind: StringSecret
+metadata:
+  name: profile-oauth
+spec:
+  fields:
+    - fieldName: "cookie-secret"
+      encoding: "hex"
+      length: "24"

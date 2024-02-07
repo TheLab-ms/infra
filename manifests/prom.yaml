@@ -1,0 +1,362 @@
+# This file contains the Prometheus config along with various exporters
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prom-config
+data:
+  prom.conf: |
+    global:
+      scrape_interval: 1m
+
+    scrape_configs:
+      - job_name: external-node-exporter
+        static_configs:
+          - labels: { "node": "tunnelsvr" }
+            targets: ['10.13.13.1:9100'] # through vpn tunnel
+
+      - job_name: homeassistant
+        metrics_path: /api/prometheus
+        static_configs:
+          - targets: ['10.200.10.50:8123']
+
+      - job_name: ingress-caddy
+        static_configs:
+          - targets: ['10.13.13.2:9101']
+
+      - job_name: k8s-nodes
+        scheme: https
+        metrics_path: /metrics/cadvisor
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        authorization:
+          credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+          - role: node
+
+      - job_name: k8s-pods
+        scheme: http
+        tls_config:
+          ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+        authorization:
+          credentials_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+        kubernetes_sd_configs:
+          - role: pod
+        relabel_configs:
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+          action: keep
+          regex: .*(prometheus|metrics|true).*
+        - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+          action: replace
+          target_label: __metrics_path__
+          regex: (.+)
+        - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+          action: replace
+          regex: ([^:]+)(?::\d+)?;(\d+)
+          replacement: $1:$2
+          target_label: __address__
+        - source_labels: [__meta_kubernetes_pod_node_name]
+          target_label: node
+  alertmgr.conf: |
+    route:
+      receiver: discord
+      group_by: ['alertname', 'job']
+      group_wait: 10s
+      group_interval: 5m
+      repeat_interval: 3h
+
+    receivers:
+      - name: discord
+        discord_configs:
+        - webhook_url: https://discord.com/api/webhooks/1197034989209010286/wr75Ukk2PH5Oh4vhip4zHFW0rlXXc5-DlcYmmUJHQhnNqVdBuLBEefjoPfG50Zcx5aMd
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: prom
+spec:
+  type: ClusterIP
+  selector:
+      app: prom
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 9090
+
+---
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prom
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prom
+subjects:
+- kind: ServiceAccount
+  name: prom
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: cluster-admin
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prom
+  labels:
+    app: prom
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: prom
+  template:
+    metadata:
+      labels:
+        app: prom
+    spec:
+      serviceAccountName: prom
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      containers:
+      - name: prom
+        image: quay.io/prometheus/prometheus:v2.48.0
+        command:
+          - prometheus
+          - --storage.tsdb.path=/durable
+          - --storage.tsdb.retention.time=1d
+        volumeMounts:
+          - name: storage
+            mountPath: /durable
+          - name: conf
+            mountPath: /prometheus/prometheus.yml
+            subPath: prom.conf
+        readinessProbe:
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            path: /-/ready
+            port: 9090
+      volumes:
+        - name: storage
+          hostPath:
+            path: /opt/prom
+        - name: conf
+          configMap:
+            name: prom-config
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertmgr
+  labels:
+    app: alertmgr
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: alertmgr
+  template:
+    metadata:
+      labels:
+        app: alertmgr
+    spec:
+      serviceAccountName: prom
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      containers:
+      - name: alertmgr
+        image: quay.io/prometheus/alertmanager:v0.26.0
+        args:
+          - --config.file=/prometheus/alertmgr.yml
+          - --storage.path=/durable
+        volumeMounts:
+          - name: storage
+            mountPath: /durable
+          - name: conf
+            mountPath: /prometheus/alertmgr.yml
+            subPath: alertmgr.conf
+        readinessProbe:
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            path: /-/ready
+            port: 9093
+      volumes:
+        - name: storage
+          hostPath:
+            path: /opt/alertmgr
+        - name: conf
+          configMap:
+            name: prom-config
+
+---
+
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-exporter
+spec:
+  selector:
+    matchLabels:
+      app: node-exporter
+  template:
+    metadata:
+      labels:
+        app: node-exporter
+      annotations:
+        prometheus.io/port: "9100"
+        prometheus.io/path: /metrics
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - args:
+        - --path.sysfs=/host/sys
+        - --path.rootfs=/host/root
+        - --no-collector.wifi
+        - --no-collector.hwmon
+        - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)
+        - --collector.netclass.ignored-devices=^(veth.*)$
+        name: node-exporter
+        image: quay.io/prometheus/node-exporter:v1.7.0
+        volumeMounts:
+        - mountPath: /host/sys
+          mountPropagation: HostToContainer
+          name: sys
+          readOnly: true
+        - mountPath: /host/root
+          mountPropagation: HostToContainer
+          name: root
+          readOnly: true
+      volumes:
+      - hostPath:
+          path: /sys
+        name: sys
+      - hostPath:
+          path: /
+        name: root
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mikrotik-exporter
+  labels:
+    app: mikrotik-exporter
+  annotations:
+    reloader.stakater.com/auto: "true"
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mikrotik-exporter
+  template:
+    metadata:
+      labels:
+        app: mikrotik-exporter
+      annotations:
+        prometheus.io/port: "49090"
+        prometheus.io/path: /metrics
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - name: mikrotik-exporter
+        image: ghcr.io/akpw/mktxp:gha-5421251592
+        volumeMounts:
+          - name: conf
+            mountPath: /home/mktxp/mktxp
+      volumes:
+        - name: conf
+          configMap:
+            name: mikrotik-exporter-config
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mikrotik-exporter-config
+data:
+  _mktxp.conf: |
+    [MKTXP]
+        port = 49090
+        socket_timeout = 2
+
+        initial_delay_on_failure = 120
+        max_delay_on_failure = 900
+        delay_inc_div = 5
+
+        bandwidth = False
+        bandwidth_test_interval = 600
+        minimal_collect_interval = 5
+
+        verbose_mode = False
+
+        fetch_routers_in_parallel = False
+        max_worker_threads = 5
+        max_scrape_duration = 10
+        total_max_scrape_duration = 30
+
+  mktxp.conf: |
+    [Router]
+        enabled = True
+
+        hostname = 10.200.1.1
+        port = 8728
+
+        username = prometheus-exporter
+        password = doesnotmatter # this is locked down to read only access from the server's IP - safe enough to commit in plain text
+
+        use_ssl = False
+        no_ssl_certificate = False
+        ssl_certificate_verify = False
+
+        installed_packages = False
+        dhcp = False
+        dhcp_lease = False
+
+        connections = True
+        connection_stats = False
+        pool = False
+        interface = True
+        firewall = False
+        ipv6_firewall = False
+        ipv6_neighbor = False
+        poe = False
+        monitor = False
+        netwatch = False
+        public_ip = False
+        route = False
+        wireless = True
+        wireless_clients = True
+        capsman = False
+        capsman_clients = False
+        user = False
+        queue = False
+        remote_dhcp_entry = None
+        use_comments_over_names = True
+        check_for_updates = False

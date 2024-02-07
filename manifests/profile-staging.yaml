@@ -1,0 +1,141 @@
+# TODO: Quiet oauth2proxy probe logs
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-staging
+  labels:
+    app: profile-staging
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: profile-staging
+  template:
+    metadata:
+      labels:
+        app: profile-staging
+      annotations:
+        prometheus.io/port: "8081"
+        prometheus.io/path: /metrics
+        prometheus.io/scrape: "true"
+    spec:
+      containers:
+      - name: svc
+        # Image is set in the profile app's deploy github action
+        volumeMounts:
+          - name: keycloak-creds
+            mountPath: /var/lib/keycloak
+          - name: root-ca
+            mountPath: /etc/ssl/certs
+        env:
+        - name: KEYCLOAK_URL
+          value: https://keycloak.apps.thelab.ms
+        - name: KEYCLOAK_MEMBERS_GROUP_ID
+          value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
+        - name: SELF_URL
+          value: https://profile.staging.apps.thelab.ms
+        - name: DOCUSEAL_URL
+          value: https://docuseal.apps.thelab.ms
+        - name: DOCUSEAL_TOKEN
+          value: e3wCWeKbKYScFWZ9baNMsb # this isn't really secret - it can't get anything
+        - name: STRIPE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: stripe-test-creds
+              key: secret
+        - name: STRIPE_WEBHOOK_KEY
+          valueFrom:
+            secretKeyRef:
+              name: stripe-test-creds
+              key: webhook-key
+        - name: AGE_PRIVATE_KEY
+          valueFrom:
+            secretKeyRef:
+              name: web-secrets-keys
+              key: AGE_PRIVATE_KEY
+        - name: AGE_PUBLIC_KEY
+          valueFrom:
+            secretKeyRef:
+              name: web-secrets-keys
+              key: AGE_PUBLIC_KEY
+        readinessProbe:
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            path: /health
+            port: 8080
+
+      - name: oauth2proxy
+        image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
+        volumeMounts:
+          - name: proxy-keycloak-creds
+            mountPath: /var/lib/keycloak
+        env:
+        - name: OAUTH2_PROXY_SKIP_AUTH_ROUTES
+          value: '.*(signup|assets|webhooks|events|\/f\/).*'
+        - name: OAUTH2_PROXY_UPSTREAMS
+          value: "http://127.0.0.1:8080"
+        - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
+          value: "true"
+        - name: OAUTH2_PROXY_SCOPE
+          value: "openid email profile"
+        - name: OAUTH2_PROXY_HTTP_ADDRESS
+          value: ":8082"
+        - name: OAUTH2_PROXY_REDIRECT_URL
+          value: "https://profile.staging.apps.thelab.ms/oauth2/callback"
+        - name: OAUTH2_PROXY_EMAIL_DOMAINS
+          value: "*"
+        - name: OAUTH2_PROXY_CLIENT_ID
+          value: "oauthproxy"
+        - name: OAUTH2_PROXY_PROVIDER
+          value: "keycloak-oidc"
+        - name: OAUTH2_PROXY_PASS_USER_HEADERS
+          value: "true"
+        - name: OAUTH2_PROXY_OIDC_ISSUER_URL
+          value: "https://keycloak.apps.thelab.ms/realms/master"
+        - name: OAUTH2_PROXY_CLIENT_SECRET_FILE
+          value: /var/lib/keycloak/client-secret
+        - name: OAUTH2_PROXY_COOKIE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: profile-oauth
+              key: cookie-secret
+        readinessProbe:
+          initialDelaySeconds: 2
+          periodSeconds: 5
+          httpGet:
+            path: /ping
+            port: 8082
+
+      volumes:
+        - name: keycloak-creds
+          csi:
+            driver: identity.keycloak.org
+            volumeAttributes:
+              clientID: profile-app
+        - name: proxy-keycloak-creds
+          csi:
+            driver: identity.keycloak.org
+            volumeAttributes:
+              clientID: oauthproxy
+        - name: root-ca
+          hostPath:
+            path: /etc/ssl/certs/
+            type: Directory
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: profile-staging
+spec:
+  type: ClusterIP
+  selector:
+      app: profile-staging
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8082
