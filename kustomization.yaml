@@ -14,3 +14,7 @@ configMapGenerator:
 - name: prom-config
   files:
   - configs/prometheus.yml
+
+- name: frigate-config
+  files:
+  - configs/frigate.yml
