@@ -14,8 +14,6 @@ spec:
       containers:
       - name: oauth2proxy
         image: oauth2-proxy
-        securityContext:
-          privileged: true # TODO: Why?
         volumeMounts:
           - name: proxy-keycloak-creds
             mountPath: /var/lib/keycloak
