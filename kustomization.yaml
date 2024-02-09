@@ -39,6 +39,10 @@ images:
   newName: quay.io/oauth2-proxy/oauth2-proxy
   newTag: v7.4.0
 
+- name: gliderbot
+  newName: ghcr.io/thelab-ms/gliderbot
+  newTag: latest
+
 resources:
   - manifests/access-controller-controller.yaml
   - manifests/docuseal.yaml

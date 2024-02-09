@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gliderbot
+  labels:
+    app: gliderbot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gliderbot
+  template:
+    metadata:
+      labels:
+        app: gliderbot
+    spec:
+      containers:
+        - name: svc
+          env:
+            - name: DISCORD_TOKEN
+            - name: DISCORD_GUILD
+            - name: DISCORD_CLIENT
+            
