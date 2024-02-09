@@ -3,12 +3,19 @@ resources:
   - manifests/docuseal.yaml
   - manifests/frigate.yaml
   - manifests/keycloak.yaml
-  - manifests/kubernetes-secret-generator.ext.yaml
   - manifests/nvidia.ext.yaml
   - manifests/profile-staging.yaml
   - manifests/profile.yaml
   - manifests/prom.yaml
   - manifests/wikijs.yaml
+
+patches:
+  - path: patches/oauth-sidecar.yaml
+    target:
+      group: apps
+      version: v1
+      kind: Deployment
+      annotationSelector: "oauth-sidecar=yes"
 
 configMapGenerator:
 - name: prom-config

@@ -1,6 +1,6 @@
 # Bootstrapping Keycloak requires a few manual steps - it's not worth automating them.
 # - Generate the root account's password: kubectl create secret generic keycloak-admin --from-literal=KEYCLOAK_ADMIN_PASSWORD=$(openssl rand -base64 16)
-# - Create a client to be used by the CSI driver, which issues client secrets to pods: kubectl create secret generic keycloak-csi-driver-creds --from-literal=password=$CLIENT_SECRET
+# - Create a client called "k8s-csi-driver" to be used by the CSI driver, which issues client secrets to pods: kubectl create secret generic keycloak-csi-driver-creds --from-literal=password=$CLIENT_SECRET
 
 apiVersion: apps/v1
 kind: Deployment

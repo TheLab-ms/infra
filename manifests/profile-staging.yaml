@@ -1,11 +1,11 @@
-# TODO: Quiet oauth2proxy probe logs
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: profile-staging
   labels:
     app: profile-staging
+  annotations:
+    oauth-sidecar: "yes"
 spec:
   replicas: 1
   selector:
@@ -70,46 +70,13 @@ spec:
             port: 8080
 
       - name: oauth2proxy
-        image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
-        volumeMounts:
-          - name: proxy-keycloak-creds
-            mountPath: /var/lib/keycloak
         env:
-        - name: OAUTH2_PROXY_SKIP_AUTH_ROUTES
-          value: '.*(signup|assets|webhooks|events|\/f\/).*'
         - name: OAUTH2_PROXY_UPSTREAMS
           value: "http://127.0.0.1:8080"
-        - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
-          value: "true"
-        - name: OAUTH2_PROXY_SCOPE
-          value: "openid email profile"
-        - name: OAUTH2_PROXY_HTTP_ADDRESS
-          value: ":8082"
+        - name: OAUTH2_PROXY_SKIP_AUTH_ROUTES
+          value: '.*(signup|assets|webhooks|events|\/f\/).*'
         - name: OAUTH2_PROXY_REDIRECT_URL
           value: "https://profile.staging.apps.thelab.ms/oauth2/callback"
-        - name: OAUTH2_PROXY_EMAIL_DOMAINS
-          value: "*"
-        - name: OAUTH2_PROXY_CLIENT_ID
-          value: "oauthproxy"
-        - name: OAUTH2_PROXY_PROVIDER
-          value: "keycloak-oidc"
-        - name: OAUTH2_PROXY_PASS_USER_HEADERS
-          value: "true"
-        - name: OAUTH2_PROXY_OIDC_ISSUER_URL
-          value: "https://keycloak.apps.thelab.ms/realms/master"
-        - name: OAUTH2_PROXY_CLIENT_SECRET_FILE
-          value: /var/lib/keycloak/client-secret
-        - name: OAUTH2_PROXY_COOKIE_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: profile-oauth
-              key: cookie-secret
-        readinessProbe:
-          initialDelaySeconds: 2
-          periodSeconds: 5
-          httpGet:
-            path: /ping
-            port: 8082
 
       volumes:
         - name: keycloak-creds
@@ -117,11 +84,7 @@ spec:
             driver: identity.keycloak.org
             volumeAttributes:
               clientID: profile-app
-        - name: proxy-keycloak-creds
-          csi:
-            driver: identity.keycloak.org
-            volumeAttributes:
-              clientID: oauthproxy
+
         - name: root-ca
           hostPath:
             path: /etc/ssl/certs/
@@ -141,4 +104,4 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: 8082
+      targetPort: 8880

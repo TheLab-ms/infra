@@ -4,6 +4,8 @@ metadata:
   name: frigate
   labels:
     app: frigate
+  annotations:
+    oauth-sidecar: "yes"
 spec:
   replicas: 1
   strategy:
@@ -20,6 +22,15 @@ spec:
       runtimeClassName: nvidia
 
       containers:
+      - name: oauth2proxy
+        env:
+        - name: OAUTH2_PROXY_UPSTREAMS
+          value: "http://127.0.0.1:5000"
+        - name: OAUTH2_PROXY_REDIRECT_URL
+          value: "https://frigate.apps.thelab.ms/oauth2/callback"
+        - name: OAUTH2_PROXY_ALLOWED_GROUPS
+          value: "thelab-leadership"
+
       - name: frigate
         image: ghcr.io/blakeblackshear/frigate:0.12.1
         volumeMounts:
@@ -42,56 +53,7 @@ spec:
           limits:
             nvidia.com/gpu: "1"
 
-      - name: oauth2proxy
-        image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
-        securityContext:
-          privileged: true
-        volumeMounts:
-          - name: proxy-keycloak-creds
-            mountPath: /var/lib/keycloak
-        env:
-        - name: OAUTH2_PROXY_UPSTREAMS
-          value: "http://127.0.0.1:5000"
-        - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
-          value: "true"
-        - name: OAUTH2_PROXY_ALLOWED_GROUPS
-          value: "thelab-leadership"
-        - name: OAUTH2_PROXY_SCOPE
-          value: "openid email profile"
-        - name: OAUTH2_PROXY_HTTP_ADDRESS
-          value: ":8888"
-        - name: OAUTH2_PROXY_REDIRECT_URL
-          value: "https://frigate.apps.thelab.ms/oauth2/callback"
-        - name: OAUTH2_PROXY_EMAIL_DOMAINS
-          value: "*"
-        - name: OAUTH2_PROXY_CLIENT_ID
-          value: "oauthproxy"
-        - name: OAUTH2_PROXY_PROVIDER
-          value: "keycloak-oidc"
-        - name: OAUTH2_PROXY_PASS_USER_HEADERS
-          value: "true"
-        - name: OAUTH2_PROXY_OIDC_ISSUER_URL
-          value: "https://keycloak.apps.thelab.ms/realms/master"
-        - name: OAUTH2_PROXY_CLIENT_SECRET_FILE
-          value: /var/lib/keycloak/client-secret
-        - name: OAUTH2_PROXY_COOKIE_SECRET
-          valueFrom:
-            secretKeyRef:
-              name: frigate-oauth
-              key: cookie-secret
-        readinessProbe:
-          initialDelaySeconds: 2
-          periodSeconds: 5
-          httpGet:
-            path: /ping
-            port: 8888
-
       volumes:
-        - name: proxy-keycloak-creds
-          csi:
-            driver: identity.keycloak.org
-            volumeAttributes:
-              clientID: oauthproxy
         - name: cache
           emptyDir:
             medium: Memory
@@ -121,7 +83,7 @@ spec:
     - name: http
       protocol: TCP
       port: 80
-      targetPort: 8888
+      targetPort: 8880
 
 ---
 
@@ -138,18 +100,6 @@ spec:
       protocol: TCP
       port: 80
       targetPort: 5000
-
----
-
-apiVersion: secretgenerator.mittwald.de/v1alpha1
-kind: StringSecret
-metadata:
-  name: frigate-oauth
-spec:
-  fields:
-    - fieldName: "cookie-secret"
-      encoding: "hex"
-      length: "24"
 
 ---
 
