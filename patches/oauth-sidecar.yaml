@@ -2,8 +2,6 @@
 #
 # > kubectl create secret generic oauth-cookie-secret --from-literal=secret=$(openssl rand -base64 24)
 
-# TODO: Quiet oauth2proxy probe logs
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -19,6 +17,8 @@ spec:
             mountPath: /var/lib/keycloak
         env:
         - name: OAUTH2_PROXY_SKIP_PROVIDER_BUTTON
+          value: "true"
+        - name: OAUTH2_PROXY_SILENCE_PING_LOGGING
           value: "true"
         - name: OAUTH2_PROXY_SCOPE
           value: "openid email profile"
