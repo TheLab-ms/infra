@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: controller
-        image: ghcr.io/thelab-ms/access-controller-controller:main-b26e1cb
+        image: access-controller-controller
         volumeMounts:
           - name: keycloak-creds
             mountPath: /var/lib/keycloak

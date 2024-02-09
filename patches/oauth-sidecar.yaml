@@ -13,9 +13,9 @@ spec:
     spec:
       containers:
       - name: oauth2proxy
-        image: quay.io/oauth2-proxy/oauth2-proxy:v7.4.0
+        image: oauth2-proxy
         securityContext:
-          privileged: true
+          privileged: true # TODO: Why?
         volumeMounts:
           - name: proxy-keycloak-creds
             mountPath: /var/lib/keycloak

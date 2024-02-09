@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: wikijs
-        image: docker.io/requarks/wiki@sha256:56000cf6a1df13bb9087897c4722fe25f4fd76491f92e746560e509b67e28a58
+        image: wikijs
         env:
         - name: HA_ACTIVE
           value: "true"

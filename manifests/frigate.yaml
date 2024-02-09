@@ -32,7 +32,7 @@ spec:
           value: "thelab-leadership"
 
       - name: frigate
-        image: ghcr.io/blakeblackshear/frigate:0.12.1
+        image: frigate
         volumeMounts:
           - name: cache
             mountPath: /tmp/cache

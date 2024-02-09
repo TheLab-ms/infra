@@ -62,7 +62,7 @@ spec:
         runAsGroup: 0
       containers:
       - name: prom
-        image: quay.io/prometheus/prometheus:v2.48.0
+        image: prometheus
         command:
           - prometheus
           - --storage.tsdb.path=/durable
@@ -115,7 +115,7 @@ spec:
         - --collector.filesystem.ignored-mount-points=^/(dev|proc|sys|var/lib/docker/.+|var/lib/kubelet/pods/.+)($|/)
         - --collector.netclass.ignored-devices=^(veth.*)$
         name: node-exporter
-        image: quay.io/prometheus/node-exporter:v1.7.0
+        image: prom-node-exporter
         volumeMounts:
         - mountPath: /host/sys
           mountPropagation: HostToContainer
@@ -157,7 +157,7 @@ spec:
     spec:
       containers:
       - name: mikrotik-exporter
-        image: ghcr.io/akpw/mktxp:gha-5421251592
+        image: prom-mikrotik-exporter
         volumeMounts:
           - name: conf
             mountPath: /home/mktxp/mktxp
