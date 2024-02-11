@@ -34,7 +34,7 @@ spec:
         - name: KC_PROXY
           value: "edge"
         - name: KC_DB_URL_HOST
-          value: "10.200.10.11"
+          value: "psql-keycloak.default.svc.cluster.local"
         - name: KC_DB_URL_DATABASE
           value: "postgres"
         - name: KC_DB_USERNAME
@@ -50,7 +50,7 @@ spec:
           valueFrom:
             secretKeyRef:
               name: keycloak-db
-              key: KC_DB_PASSWORD
+              key: password
         readinessProbe:
           initialDelaySeconds: 2
           periodSeconds: 5

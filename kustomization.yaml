@@ -62,6 +62,7 @@ resources:
   - manifests/profile-staging.yaml
   - manifests/profile.yaml
   - manifests/prom.yaml
+  - manifests/psql-keycloak.yaml
   - manifests/psql-reporting.yaml
   - manifests/psql-wikijs.yaml
   - manifests/wikijs.yaml
