@@ -11,6 +11,10 @@ images:
   newName: ghcr.io/blakeblackshear/frigate
   newTag: "0.12.1"
 
+- name: grafana
+  newName: docker.io/grafana/grafana-oss
+  newTag: "10.0.0"
+
 - name: keycloak
   newName: ghcr.io/thelab-ms/keycloak-extensions
   newTag: main-ce5b2d5
@@ -43,6 +47,7 @@ resources:
   - manifests/access-controller-controller.yaml
   - manifests/docuseal.yaml
   - manifests/frigate.yaml
+  - manifests/grafana.yaml
   - manifests/keycloak.yaml
   - manifests/nvidia.ext.yaml
   - manifests/profile-staging.yaml
@@ -66,3 +71,7 @@ configMapGenerator:
 - name: frigate-config
   files:
   - configs/frigate.yml
+
+- name: grafana-config
+  files:
+  - configs/grafana.ini
