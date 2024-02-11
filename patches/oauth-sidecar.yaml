@@ -1,7 +1,3 @@
-# Assumes the cookie secret has been generated like this:
-#
-# > kubectl create secret generic oauth-cookie-secret --from-literal=secret=$(openssl rand -base64 24)
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
