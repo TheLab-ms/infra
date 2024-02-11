@@ -1,7 +1,3 @@
-# Assumes a signing key for the file server tokens has been generated like this:
-#
-# > kubectl create secret generic profile-file-token-key --from-literal=key=$(openssl rand -base64 32)
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -68,7 +64,7 @@ spec:
         - name: EVENT_PSQL_USERNAME
           value: postgres
         - name: EVENT_PSQL_ADDR
-          value: "10.200.10.18"
+          value: "psql-reporting.default.svc.cluster.local"
         - name: EVENT_PSQL_PASSWORD
           valueFrom:
             secretKeyRef:

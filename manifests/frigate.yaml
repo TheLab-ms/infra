@@ -126,7 +126,7 @@ spec:
         image: ghcr.io/thelab-ms/frigate-exporter:main-8bf970e
         env:
         - name: POSTGRES_HOST
-          value: "10.200.10.18"
+          value: "psql-reporting.default.svc.cluster.local"
         - name: FRIGATE_URL
           value: http://frigate-unauthenticated.default.svc.cluster.local
         - name: CAMERAS

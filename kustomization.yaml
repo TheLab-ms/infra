@@ -39,6 +39,10 @@ images:
   newName: ghcr.io/akpw/mktxp
   newTag: gha-5421251592
 
+- name: postgres
+  newName: docker.io/postgres
+  newTag: "15.3"
+
 - name: wikijs
   newName: docker.io/requarks/wiki
   digest: sha256:56000cf6a1df13bb9087897c4722fe25f4fd76491f92e746560e509b67e28a58
@@ -58,6 +62,7 @@ resources:
   - manifests/profile-staging.yaml
   - manifests/profile.yaml
   - manifests/prom.yaml
+  - manifests/psql-reporting.yaml
   - manifests/wikijs.yaml
 
 patches:
