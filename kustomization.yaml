@@ -63,6 +63,7 @@ resources:
   - manifests/profile.yaml
   - manifests/prom.yaml
   - manifests/psql-reporting.yaml
+  - manifests/psql-wikijs.yaml
   - manifests/wikijs.yaml
 
 patches:

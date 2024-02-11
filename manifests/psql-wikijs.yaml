@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: psql-wikijs
+  labels:
+    app: psql-wikijs
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: psql-wikijs
+  template:
+    metadata:
+      labels:
+        app: psql-wikijs
+    spec:
+      nodeName: supermicro1
+      containers:
+      - name: psql
+        image: postgres
+        env:
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: wikijs
+              key: password
+        volumeMounts:
+          - name: data
+            mountPath: /var/lib/postgresql/data
+
+      volumes:
+        - name: data
+          hostPath:
+            path: /opt/wikijs-psql
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: psql-wikijs
+spec:
+  clusterIP: None
+  selector:
+      app: psql-wikijs
+  ports:
+    - name: psql
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
