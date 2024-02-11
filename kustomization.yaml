@@ -11,6 +11,10 @@ images:
   newName: ghcr.io/blakeblackshear/frigate
   newTag: "0.12.1"
 
+- name: gliderbot
+  newName: ghcr.io/thelab-ms/gliderbot
+  digest: sha256:6043ad32f52e87a86c47af60397dd97df0c1b8acafbc120e1a8001f6d894ea09
+
 - name: grafana
   newName: docker.io/grafana/grafana-oss
   newTag: "10.0.0"
@@ -47,6 +51,7 @@ resources:
   - manifests/access-controller-controller.yaml
   - manifests/docuseal.yaml
   - manifests/frigate.yaml
+  - manifests/gliderbot.yaml
   - manifests/grafana.yaml
   - manifests/keycloak.yaml
   - manifests/nvidia.ext.yaml
