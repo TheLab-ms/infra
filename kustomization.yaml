@@ -15,6 +15,10 @@ images:
   newName: ghcr.io/thelab-ms/gliderbot
   digest: sha256:6043ad32f52e87a86c47af60397dd97df0c1b8acafbc120e1a8001f6d894ea09
 
+- name: homeassistant
+  newName: ghcr.io/home-assistant/home-assistant
+  newTag: "2023.11.3"
+
 - name: grafana
   newName: docker.io/grafana/grafana-oss
   newTag: "10.0.0"
@@ -57,6 +61,7 @@ resources:
   - manifests/frigate.yaml
   - manifests/gliderbot.yaml
   - manifests/grafana.yaml
+  - manifests/homeassistant.yaml
   - manifests/keycloak.yaml
   - manifests/nvidia.ext.yaml
   - manifests/profile-staging.yaml
