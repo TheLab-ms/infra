@@ -44,7 +44,7 @@ cameras:
 
   Atrium2:
     ffmpeg:
-      hwaccel_args: preset-nvidia-h264
+      hwaccel_args: preset-nvidia-h265
       inputs:
         - path: rtsp://admin:thelab.ms@10.200.0.28:554/cam/realmonitor?channel=1&subtype=0
 

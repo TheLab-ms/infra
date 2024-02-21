@@ -30,6 +30,8 @@ spec:
             mountPath: /etc/ssl/certs
           - name: data
             mountPath: /data
+          - name: tmp
+            mountPath: /tmp
         env:
         - name: KEYCLOAK_URL
           value: https://keycloak.apps.thelab.ms
@@ -125,6 +127,9 @@ spec:
         - name: data
           hostPath:
             path: /opt/profile-data
+        - name: tmp
+          emptyDir:
+            sizeLimit: 100Gi
 
 ---
 
