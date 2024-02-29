@@ -171,14 +171,14 @@ metadata:
   name: profile
 spec:
   virtualhost:
-    fqdn: profile.apps.thelab.ms
+    fqdn: profile.thelab.ms
     rateLimitPolicy:
       local:
         requests: 50
         unit: second
         burst: 50
     tls:
-      secretName: apps-wildcard-cert
+      secretName: wildcard-cert
   routes:
     - conditions:
       - prefix: /
