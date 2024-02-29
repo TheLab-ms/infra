@@ -88,3 +88,4 @@ spec:
       services:
         - name: grafana
           port: 80
+      enableWebsockets: true

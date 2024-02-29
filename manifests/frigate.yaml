@@ -159,3 +159,4 @@ spec:
       services:
         - name: frigate
           port: 80
+      enableWebsockets: true

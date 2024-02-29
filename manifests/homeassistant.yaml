@@ -86,3 +86,4 @@ spec:
       services:
         - name: homeassistant
           port: 80
+      enableWebsockets: true
