@@ -63,3 +63,26 @@ spec:
       protocol: TCP
       port: 80
       targetPort: 8123
+
+---
+
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: homeassistant
+spec:
+  virtualhost:
+    fqdn: homeassistant.apps.thelab.ms
+    rateLimitPolicy:
+      local:
+        requests: 50
+        unit: second
+        burst: 50
+    tls:
+      secretName: apps-wildcard-cert
+  routes:
+    - conditions:
+      - prefix: /
+      services:
+        - name: homeassistant
+          port: 80

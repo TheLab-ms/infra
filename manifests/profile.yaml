@@ -162,3 +162,26 @@ spec:
       protocol: TCP
       port: 8888
       targetPort: 8888
+
+---
+
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: profile
+spec:
+  virtualhost:
+    fqdn: profile.apps.thelab.ms
+    rateLimitPolicy:
+      local:
+        requests: 50
+        unit: second
+        burst: 50
+    tls:
+      secretName: apps-wildcard-cert
+  routes:
+    - conditions:
+      - prefix: /
+      services:
+        - name: profile
+          port: 80

@@ -37,3 +37,20 @@ spec:
   commonName: "*.thelab.ms"
   dnsNames:
     - "*.thelab.ms"
+
+---
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: apps-wildcard
+  namespace: default
+spec:
+  secretName: apps-wildcard-cert
+  issuerRef:
+    name: letsencrypt-prod
+    kind: Issuer
+    group: cert-manager.io
+  commonName: "*.apps.thelab.ms"
+  dnsNames:
+    - "*.apps.thelab.ms"

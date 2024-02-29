@@ -136,3 +136,26 @@ spec:
             secretKeyRef:
               name: reporting-psql
               key: password
+
+---
+
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: frigate
+spec:
+  virtualhost:
+    fqdn: frigate.apps.thelab.ms
+    rateLimitPolicy:
+      local:
+        requests: 50
+        unit: second
+        burst: 50
+    tls:
+      secretName: apps-wildcard-cert
+  routes:
+    - conditions:
+      - prefix: /
+      services:
+        - name: frigate
+          port: 80
