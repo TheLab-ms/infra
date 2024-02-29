@@ -57,6 +57,8 @@ images:
 
 resources:
   - manifests/access-controller-controller.yaml
+  - manifests/cert-manager.ext.yaml
+  - manifests/cert-manager.yaml
   - manifests/docuseal.yaml
   - manifests/frigate.yaml
   - manifests/gliderbot.yaml

@@ -28,4 +28,6 @@ kubectl create secret generic wikijs --from-literal=password=$(openssl rand -bas
 kubectl create secret generic keycloak-db --from-literal=password=$(openssl rand -base64 24)
 
 # Also create a Keycloak client called "k8s-csi-driver" to be used by the CSI driver: kubectl create secret generic keycloak-csi-driver-creds --from-literal=password=$CLIENT_SECRET
+
+# Get a service principal to access Azure like: kubectl create secret generic azure-sp --from-literal=clientID=846d6a2c-6fa0-48f5-b810-f997cf8d8e50 --from-literal=secret=SECRET
 ```
