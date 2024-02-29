@@ -73,6 +73,7 @@ resources:
   - manifests/psql-keycloak.yaml
   - manifests/psql-reporting.yaml
   - manifests/psql-wikijs.yaml
+  - manifests/redirects.yaml
   - manifests/wikijs.yaml
 
 patches:
