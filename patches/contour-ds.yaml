@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: envoy
+  namespace: projectcontour
+spec:
+  template:
+    spec:
+      tolerations:
+      - key: "specialPodsOnly"
+        value: "please"
+        operator: "Equal"
+        effect: "NoSchedule"
+      containers:
+      - name: envoy
+        ports:
+        - containerPort: 8080
+          hostPort: 0
+          name: http
+          protocol: TCP
+        - containerPort: 8443
+          hostPort: 0
+          name: https
+          protocol: TCP

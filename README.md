@@ -17,6 +17,10 @@ Or `make apply` to deploy locally.
 
 ## Kubernetes Bootstrapping
 
+Install k3s with these flags:
+
+- --disable-traefik
+
 After installing k3s there are a few steps that don't make sense to automate since they (hopefully) won't need to happen again.
 
 ```bash

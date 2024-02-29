@@ -59,6 +59,7 @@ resources:
   - manifests/access-controller-controller.yaml
   - manifests/cert-manager.ext.yaml
   - manifests/cert-manager.yaml
+  - manifests/contour.ext.yaml
   - manifests/docuseal.yaml
   - manifests/frigate.yaml
   - manifests/gliderbot.yaml
@@ -75,6 +76,21 @@ resources:
   - manifests/wikijs.yaml
 
 patches:
+  - path: patches/contour-ds.yaml
+    target:
+      group: apps
+      version: v1
+      kind: DaemonSet
+      name: envoy
+      namespace: projectcontour
+
+  - path: patches/contour-svc.yaml
+    target:
+      version: v1
+      kind: Service
+      name: envoy
+      namespace: projectcontour
+
   - path: patches/oauth-sidecar.yaml
     target:
       group: apps
