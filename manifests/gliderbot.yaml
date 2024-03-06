@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: gliderbot
-        image: gliderbot
+        # Image is set in the deploy github action
         env:
         - name: "DISCORD_MEMBERSHIP_ROLE"
           value: "814348587424022528"
