@@ -40,6 +40,8 @@ spec:
           value: "4eea9c17-f9b1-41eb-8f25-721ae04b66f6"
         - name: "KEYCLOAK_LEADERSHIP_GROUP"
           value: "29146cfe-15d2-46dc-9b3b-3a176b74afbb"
+        - name: "HOMEASSISTANT_URL"
+          value: "https://homeassistant.apps.thelab.ms"
         - name: CONFIG
           valueFrom:
             secretKeyRef:
@@ -56,3 +58,8 @@ spec:
             secretKeyRef:
               name: gliderbot
               key: keycloak-pass
+        - name: "HOMEASSISTANT_API_TOKEN"
+          valueFrom:
+            secretKeyRef:
+              name: gliderbot
+              key: homeassistant-api-token
