@@ -40,7 +40,7 @@ cameras:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
-        - path: rtsp://10.200.0.13:554/Streaming/Channels/101
+        - path: rtsp://10.200.2.14:554/Streaming/Channels/101
 
   Atrium2:
     ffmpeg:
@@ -58,13 +58,13 @@ cameras:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
-        - path: rtsp://10.200.0.16:554/Streaming/Channels/101
+        - path: rtsp://10.200.2.15:554/Streaming/Channels/101
 
   Classroom1:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
-        - path: rtsp://10.200.0.17:554/Streaming/Channels/101
+        - path: rtsp://10.200.2.16:554/Streaming/Channels/101
     motion:
       mask:
         - 109,163,105,28,28,33,39,182
