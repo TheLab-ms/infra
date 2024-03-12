@@ -223,10 +223,10 @@ data:
         route = False
         wireless = True
         wireless_clients = True
-        capsman = False
-        capsman_clients = False
+        capsman = True
+        capsman_clients = True
         user = False
-        queue = False
+        queue = True
         remote_dhcp_entry = None
         use_comments_over_names = True
         check_for_updates = False
