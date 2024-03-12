@@ -4,7 +4,7 @@ mqtt:
 record:
   enabled: True
   retain:
-    days: 30
+    days: 14
     mode: motion
 
 # detectors:
