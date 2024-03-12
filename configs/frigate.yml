@@ -25,13 +25,13 @@ cameras:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
-        - path: rtsp://admin:a1234567@10.200.0.11/live
+        - path: rtsp://admin:a1234567@10.200.2.10/live
 
   Vent2:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
-        - path: rtsp://admin:a1234567@10.200.0.12/live
+        - path: rtsp://admin:a1234567@10.200.2.12/live
     motion:
       mask:
         - 363,48,307,200,230,154,276,0
@@ -46,7 +46,7 @@ cameras:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
-        - path: rtsp://admin:thelab.ms@10.200.0.28:554/cam/realmonitor?channel=1&subtype=0
+        - path: rtsp://admin:thelab.ms@10.200.2.13:554/cam/realmonitor?channel=1&subtype=0
 
   Woodshop1:
     ffmpeg:
@@ -75,10 +75,10 @@ cameras:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
-        - path: rtsp://admin:a1234567@10.200.0.18/live
+        - path: rtsp://admin:a1234567@10.200.2.7/live
 
   Cleanroom:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
-        - path: rtsp://admin:a1234567@10.200.0.19/live
+        - path: rtsp://admin:a1234567@10.200.2.8/live
