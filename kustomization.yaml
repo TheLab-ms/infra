@@ -51,6 +51,10 @@ images:
   newName: docker.io/postgres
   newTag: "15.3"
 
+- name: samba
+  newName: docker.io/dperson/samba
+  newTag: latest # yolo
+
 - name: wikijs
   newName: docker.io/requarks/wiki
   digest: sha256:56000cf6a1df13bb9087897c4722fe25f4fd76491f92e746560e509b67e28a58
@@ -79,6 +83,7 @@ resources:
   - manifests/psql-reporting.yaml
   - manifests/psql-wikijs.yaml
   - manifests/redirects.yaml
+  - manifests/samba.yaml
   - manifests/wikijs.yaml
 
 patches:

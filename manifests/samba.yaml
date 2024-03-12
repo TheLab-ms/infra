@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: samba
+  labels:
+    app: samba
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: samba
+  template:
+    metadata:
+      labels:
+        app: samba
+    spec:
+      hostNetwork: true
+      volumes:
+        - name: data
+          hostPath:
+            path: /opt/nas
+
+      containers:
+      - name: samba
+        image: samba
+        args: ["-p", "-r", "-s", "TheLabNAS;/share;yes;no;yes;all;all;all"]
+        resources:
+          limits:
+            memory: 512Mi
