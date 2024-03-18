@@ -5,13 +5,13 @@ metadata:
   namespace: projectcontour
 spec:
   $patch: replace
-  type: LoadBalancer
+  type: ClusterIP
   ports:
-  - port: 8080
+  - port: 80
     name: http
     protocol: TCP
     targetPort: 8080
-  - port: 8443
+  - port: 443
     name: https
     protocol: TCP
     targetPort: 8443

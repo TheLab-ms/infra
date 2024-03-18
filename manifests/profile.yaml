@@ -89,15 +89,6 @@ spec:
             secretKeyRef:
               name: web-secrets-keys
               key: AGE_PUBLIC_KEY
-        - name: FILE_SERVER_URL
-          value: http://10.200.1.123:8888
-        - name: FILE_UPLOAD_DIR
-          value: /data
-        - name: FILE_TOKEN_SIGNING_KEY
-          valueFrom:
-            secretKeyRef:
-              name: profile-file-token-key
-              key: key
         readinessProbe:
           initialDelaySeconds: 2
           periodSeconds: 5
@@ -146,22 +137,6 @@ spec:
       protocol: TCP
       port: 80
       targetPort: 8880
-
----
-
-apiVersion: v1
-kind: Service
-metadata:
-  name: profile-files
-spec:
-  type: LoadBalancer
-  selector:
-      app: profile
-  ports:
-    - name: http
-      protocol: TCP
-      port: 8888
-      targetPort: 8888
 
 ---
 

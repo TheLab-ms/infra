@@ -19,14 +19,14 @@ Or `make apply` to deploy locally.
 
 Install k3s with these flags:
 
-- --disable-traefik
+- --disable=traefik
+- --disable=servicelb
 
 After installing k3s there are a few steps that don't make sense to automate since they (hopefully) won't need to happen again.
 
 ```bash
 kubectl create secret generic oauth-cookie-secret --from-literal=secret=$(openssl rand -base64 24)
 kubectl create secret generic keycloak-admin --from-literal=KEYCLOAK_ADMIN_PASSWORD=$(openssl rand -base64 16)
-kubectl create secret generic profile-file-token-key --from-literal=key=$(openssl rand -base64 32)
 kubectl create secret generic reporting-psql --from-literal=password=$(openssl rand -base64 24)
 kubectl create secret generic wikijs --from-literal=password=$(openssl rand -base64 24)
 kubectl create secret generic keycloak-db --from-literal=password=$(openssl rand -base64 24)
