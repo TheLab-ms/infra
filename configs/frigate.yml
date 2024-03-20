@@ -21,11 +21,17 @@ detect:
   fps: 1
 
 cameras:
-  # Vent1:
-  #   ffmpeg:
-  #     hwaccel_args: preset-nvidia-h264
-  #     inputs:
-  #       - path: rtsp://admin:a1234567@10.200.2.10/live
+  AtriumDoor:
+    ffmpeg:
+      hwaccel_args: preset-nvidia-h264
+      inputs:
+        - path: rtsp://admin:a1234567@10.200.2.12/live
+
+  Kitchen:
+    ffmpeg:
+      hwaccel_args: preset-nvidia-h264
+      inputs:
+        - path: rtsp://admin:a1234567@10.200.2.10/live
 
   Vent:
     ffmpeg:
