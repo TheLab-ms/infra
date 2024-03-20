@@ -23,9 +23,12 @@ spec:
             path: /opt/nas
 
       containers:
-      - name: samba
-        image: samba
-        args: ["-p", "-r", "-s", "TheLabNAS;/share;yes;no;yes;all;all;all"]
-        resources:
-          limits:
-            memory: 512Mi
+        - name: samba
+          image: samba
+          args: ["-p", "-r", "-s", "TheLabNAS;/share;yes;no;yes;all;all;all"]
+          resources:
+            limits:
+              memory: 512Mi
+          volumeMounts:
+            - name: data
+              mountPath: /share
