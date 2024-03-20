@@ -15,23 +15,23 @@ spec:
         app: fobsvr
     spec:
       containers:
-      - name: svc
-        image: fobsvr
-        args:
-          - --callback-url=http://fobsvr.default.svc.cluster.local
-          - --keycloak-url=https://keycloak.apps.thelab.ms
-          - --keycloak-group-id=4eea9c17-f9b1-41eb-8f25-721ae04b66f6
-        volumeMounts:
-          - name: keycloak-creds
-            mountPath: /var/lib/keycloak
-          - name: root-ca
-            mountPath: /etc/ssl/certs
-        readinessProbe:
-          initialDelaySeconds: 2
-          periodSeconds: 5
-          httpGet:
-            path: /healthz
-            port: 8080
+        - name: svc
+          image: fobsvr
+          args:
+            - --callback-url=http://fobsvr.default.svc.cluster.local
+            - --keycloak-url=http://keycloak.default.svc.cluster.local
+            - --keycloak-group-id=4eea9c17-f9b1-41eb-8f25-721ae04b66f6
+          volumeMounts:
+            - name: keycloak-creds
+              mountPath: /var/lib/keycloak
+            - name: root-ca
+              mountPath: /etc/ssl/certs
+          readinessProbe:
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            httpGet:
+              path: /healthz
+              port: 8080
 
       volumes:
         - name: keycloak-creds
@@ -45,7 +45,6 @@ spec:
             type: Directory
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -53,7 +52,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-      app: fobsvr
+    app: fobsvr
   ports:
     - name: http
       protocol: TCP
@@ -61,7 +60,6 @@ spec:
       targetPort: 8080
 
 ---
-
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -77,7 +75,6 @@ spec:
   dnsNames:
 
 ---
-
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -94,7 +91,6 @@ spec:
     - client auth
 
 ---
-
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
@@ -113,7 +109,7 @@ spec:
         caSecret: internal-ca
   routes:
     - conditions:
-      - prefix: /
+        - prefix: /
       services:
         - name: fobsvr
           port: 80

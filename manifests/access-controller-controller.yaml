@@ -17,33 +17,33 @@ spec:
         app: access-controller-controller
     spec:
       containers:
-      - name: controller
-        image: access-controller-controller
-        volumeMounts:
-          - name: keycloak-creds
-            mountPath: /var/lib/keycloak
-          - name: root-ca
-            mountPath: /etc/ssl/certs
-        env:
-        - name: SWIPE_SCRAPE_INTERVAL
-          value: "1m"
-        - name: POSTGRES_HOST
-          value: "psql-reporting.default.svc.cluster.local"
-        - name: ACCESS_CONTROL_HOST
-          value: 10.220.4.5:80
-        - name: KEYCLOAK_URL
-          value: https://keycloak.apps.thelab.ms
-        - name: AUTHORIZED_GROUP_ID
-          value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
-        - name: CALLBACK_URL
-          value: http://access-controller-controller.default.svc.cluster.local
-        - name: WEBHOOK_ADDR
-          value: :8080
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: reporting-psql
-              key: password
+        - name: controller
+          image: access-controller-controller
+          volumeMounts:
+            - name: keycloak-creds
+              mountPath: /var/lib/keycloak
+            - name: root-ca
+              mountPath: /etc/ssl/certs
+          env:
+            - name: SWIPE_SCRAPE_INTERVAL
+              value: "1m"
+            - name: POSTGRES_HOST
+              value: "psql-reporting.default.svc.cluster.local"
+            - name: ACCESS_CONTROL_HOST
+              value: 10.220.4.5:80
+            - name: KEYCLOAK_URL
+              value: http://keycloak.default.svc.cluster.local
+            - name: AUTHORIZED_GROUP_ID
+              value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
+            - name: CALLBACK_URL
+              value: http://access-controller-controller.default.svc.cluster.local
+            - name: WEBHOOK_ADDR
+              value: :8080
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: reporting-psql
+                  key: password
       volumes:
         - name: keycloak-creds
           csi:
@@ -56,7 +56,6 @@ spec:
             type: Directory
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -64,7 +63,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-      app: access-controller-controller
+    app: access-controller-controller
   ports:
     - name: http
       protocol: TCP

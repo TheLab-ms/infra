@@ -21,62 +21,62 @@ spec:
         prometheus.io/scrape: "true"
     spec:
       containers:
-      - name: svc
-        # Image is set in the profile app's deploy github action
-        volumeMounts:
-          - name: keycloak-creds
-            mountPath: /var/lib/keycloak
-          - name: root-ca
-            mountPath: /etc/ssl/certs
-        env:
-        - name: KEYCLOAK_URL
-          value: https://keycloak.apps.thelab.ms
-        - name: KEYCLOAK_MEMBERS_GROUP_ID
-          value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
-        - name: SELF_URL
-          value: https://profile.staging.apps.thelab.ms
-        - name: DOCUSEAL_URL
-          value: https://docuseal.apps.thelab.ms
-        - name: DOCUSEAL_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: docuseal
-              key: token
-        - name: STRIPE_KEY
-          valueFrom:
-            secretKeyRef:
-              name: stripe-test-creds
-              key: secret
-        - name: STRIPE_WEBHOOK_KEY
-          valueFrom:
-            secretKeyRef:
-              name: stripe-test-creds
-              key: webhook-key
-        - name: AGE_PRIVATE_KEY
-          valueFrom:
-            secretKeyRef:
-              name: web-secrets-keys
-              key: AGE_PRIVATE_KEY
-        - name: AGE_PUBLIC_KEY
-          valueFrom:
-            secretKeyRef:
-              name: web-secrets-keys
-              key: AGE_PUBLIC_KEY
-        readinessProbe:
-          initialDelaySeconds: 2
-          periodSeconds: 5
-          httpGet:
-            path: /health
-            port: 8080
+        - name: svc
+          # Image is set in the profile app's deploy github action
+          volumeMounts:
+            - name: keycloak-creds
+              mountPath: /var/lib/keycloak
+            - name: root-ca
+              mountPath: /etc/ssl/certs
+          env:
+            - name: KEYCLOAK_URL
+              value: http://keycloak.default.svc.cluster.local
+            - name: KEYCLOAK_MEMBERS_GROUP_ID
+              value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
+            - name: SELF_URL
+              value: https://profile.staging.apps.thelab.ms
+            - name: DOCUSEAL_URL
+              value: https://docuseal.apps.thelab.ms
+            - name: DOCUSEAL_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: docuseal
+                  key: token
+            - name: STRIPE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-test-creds
+                  key: secret
+            - name: STRIPE_WEBHOOK_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: stripe-test-creds
+                  key: webhook-key
+            - name: AGE_PRIVATE_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: web-secrets-keys
+                  key: AGE_PRIVATE_KEY
+            - name: AGE_PUBLIC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: web-secrets-keys
+                  key: AGE_PUBLIC_KEY
+          readinessProbe:
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            httpGet:
+              path: /health
+              port: 8080
 
-      - name: oauth2proxy
-        env:
-        - name: OAUTH2_PROXY_UPSTREAMS
-          value: "http://127.0.0.1:8080"
-        - name: OAUTH2_PROXY_SKIP_AUTH_ROUTES
-          value: '.*(signup|assets|webhooks|events|\/f\/).*'
-        - name: OAUTH2_PROXY_REDIRECT_URL
-          value: "https://profile.staging.apps.thelab.ms/oauth2/callback"
+        - name: oauth2proxy
+          env:
+            - name: OAUTH2_PROXY_UPSTREAMS
+              value: "http://127.0.0.1:8080"
+            - name: OAUTH2_PROXY_SKIP_AUTH_ROUTES
+              value: '.*(signup|assets|webhooks|events|\/f\/).*'
+            - name: OAUTH2_PROXY_REDIRECT_URL
+              value: "https://profile.staging.apps.thelab.ms/oauth2/callback"
 
       volumes:
         - name: keycloak-creds
@@ -91,7 +91,6 @@ spec:
             type: Directory
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -99,7 +98,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-      app: profile-staging
+    app: profile-staging
   ports:
     - name: http
       protocol: TCP

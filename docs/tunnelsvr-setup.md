@@ -12,7 +12,7 @@ After=network.target
 Type=simple
 Restart=always
 RestartSec=1
-ExecStart=podman run -it --rm --privileged --net=host -v /opt/wireguard:/config -e PEERS=thelabrouter,jordan,doug -e PUID=1000 -e PGID=100 -e TZ=Etc/UTC -e LOG_CONFS=false -e PERSISTENTKEEPALIVE_PEERS=thelabrouter -e SERVER_ALLOWEDIPS_PEER_thelabrouter=10.200.0.0/16 -e ALLOWEDIPS=10.13.13.0/24 docker.io/linuxserver/wireguard:1.0.20210914
+ExecStart=podman run -it --rm --privileged --net=host -v /opt/wireguard:/config -e PEERS=thelabrouter,jordan,doug -e PUID=1000 -e PGID=100 -e TZ=Etc/UTC -e LOG_CONFS=false -e PERSISTENTKEEPALIVE_PEERS=thelabrouter -e SERVER_ALLOWEDIPS_PEER_thelabrouter=10.200.0.0/16,10.220.4.0/24 -e ALLOWEDIPS=10.13.13.0/24 docker.io/linuxserver/wireguard:1.0.20210914
 LimitAS=infinity
 LimitRSS=infinity
 LimitCORE=infinity
