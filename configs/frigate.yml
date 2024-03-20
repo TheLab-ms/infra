@@ -21,11 +21,11 @@ detect:
   fps: 1
 
 cameras:
-  Vent1:
-    ffmpeg:
-      hwaccel_args: preset-nvidia-h264
-      inputs:
-        - path: rtsp://admin:a1234567@10.200.2.10/live
+  # Vent1:
+  #   ffmpeg:
+  #     hwaccel_args: preset-nvidia-h264
+  #     inputs:
+  #       - path: rtsp://admin:a1234567@10.200.2.10/live
 
   Vent2:
     ffmpeg:
@@ -33,11 +33,11 @@ cameras:
       inputs:
         - path: rtsp://admin:thelab.ms@10.200.2.17:554/cam/realmonitor?channel=1&subtype=0
 
-  Atrium1:
-    ffmpeg:
-      hwaccel_args: preset-nvidia-h264
-      inputs:
-        - path: rtsp://10.200.2.14:554/Streaming/Channels/101
+  # Atrium1:
+  #   ffmpeg:
+  #     hwaccel_args: preset-nvidia-h264
+  #     inputs:
+  #       - path: rtsp://10.200.2.14:554/Streaming/Channels/101
 
   Atrium2:
     ffmpeg:
@@ -51,11 +51,11 @@ cameras:
       inputs:
         - path: rtsp://admin:thelab.ms@10.200.2.18:554/cam/realmonitor?channel=1&subtype=0
 
-  Woodshop2:
-    ffmpeg:
-      hwaccel_args: preset-nvidia-h264
-      inputs:
-        - path: rtsp://10.200.2.15:554/Streaming/Channels/101
+  # Woodshop2:
+  #   ffmpeg:
+  #     hwaccel_args: preset-nvidia-h264
+  #     inputs:
+  #       - path: rtsp://10.200.2.15:554/Streaming/Channels/101
 
   Classroom1:
     ffmpeg:
