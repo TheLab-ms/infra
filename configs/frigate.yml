@@ -27,7 +27,7 @@ cameras:
   #     inputs:
   #       - path: rtsp://admin:a1234567@10.200.2.10/live
 
-  Vent2:
+  Vent:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
@@ -39,13 +39,13 @@ cameras:
   #     inputs:
   #       - path: rtsp://10.200.2.14:554/Streaming/Channels/101
 
-  Atrium2:
+  Atrium:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
         - path: rtsp://admin:thelab.ms@10.200.2.13:554/cam/realmonitor?channel=1&subtype=0
 
-  Woodshop1:
+  Woodshop:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
