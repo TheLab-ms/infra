@@ -5,7 +5,6 @@ metadata:
 handler: nvidia
 
 ---
-
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
@@ -24,29 +23,29 @@ spec:
       priorityClassName: "system-node-critical"
 
       containers:
-      - image: nvidia-device-plugin
-        name: nvidia-device-plugin-ctr
-        env:
-          - name: FAIL_ON_INIT_ERROR
-            value: "false"
-        securityContext:
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop: ["ALL"]
-        volumeMounts:
-        - name: device-plugin
-          mountPath: /var/lib/kubelet/device-plugins
+        - image: nvidia-device-plugin
+          name: nvidia-device-plugin-ctr
+          env:
+            - name: FAIL_ON_INIT_ERROR
+              value: "false"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: device-plugin
+              mountPath: /var/lib/kubelet/device-plugins
 
       volumes:
-      - name: device-plugin
-        hostPath:
-          path: /var/lib/kubelet/device-plugins
+        - name: device-plugin
+          hostPath:
+            path: /var/lib/kubelet/device-plugins
 
       # Below this was added and not part of the upstream manifest
       runtimeClassName: nvidia
       nodeSelector:
         kubernetes.io/hostname: "supermicro2"
       tolerations:
-      - key: specialPodsOnly
-        operator: Exists
-        effect: NoSchedule
+        - key: specialPodsOnly
+          operator: Exists
+          effect: NoSchedule

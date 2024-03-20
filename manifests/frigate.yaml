@@ -22,36 +22,36 @@ spec:
       runtimeClassName: nvidia
 
       containers:
-      - name: oauth2proxy
-        env:
-        - name: OAUTH2_PROXY_UPSTREAMS
-          value: "http://127.0.0.1:5000"
-        - name: OAUTH2_PROXY_REDIRECT_URL
-          value: "https://frigate.apps.thelab.ms/oauth2/callback"
-        - name: OAUTH2_PROXY_ALLOWED_GROUPS
-          value: "thelab-leadership"
+        - name: oauth2proxy
+          env:
+            - name: OAUTH2_PROXY_UPSTREAMS
+              value: "http://127.0.0.1:5000"
+            - name: OAUTH2_PROXY_REDIRECT_URL
+              value: "https://frigate.apps.thelab.ms/oauth2/callback"
+            - name: OAUTH2_PROXY_ALLOWED_GROUPS
+              value: "thelab-leadership"
 
-      - name: frigate
-        image: frigate
-        volumeMounts:
-          - name: cache
-            mountPath: /tmp/cache
-          - name: devshm
-            mountPath: /dev/shm
-          - name: media
-            mountPath: /media/frigate
-          - name: config
-            mountPath: /config/config.yml
-            subPath: frigate.yml
-        readinessProbe:
-          initialDelaySeconds: 2
-          periodSeconds: 5
-          httpGet:
-            path: /api/
-            port: 5000
-        resources:
-          limits:
-            nvidia.com/gpu: "1"
+        - name: frigate
+          image: frigate
+          volumeMounts:
+            - name: cache
+              mountPath: /tmp/cache
+            - name: devshm
+              mountPath: /dev/shm
+            - name: media
+              mountPath: /media/frigate
+            - name: config
+              mountPath: /config/config.yml
+              subPath: frigate.yml
+          readinessProbe:
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            httpGet:
+              path: /api/
+              port: 5000
+          resources:
+            limits:
+              nvidia.com/gpu: "1"
 
       volumes:
         - name: cache
@@ -70,7 +70,6 @@ spec:
             name: frigate-config
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -78,7 +77,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-      app: frigate
+    app: frigate
   ports:
     - name: http
       protocol: TCP
@@ -86,7 +85,6 @@ spec:
       targetPort: 8880
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -94,7 +92,7 @@ metadata:
 spec:
   type: ClusterIP
   selector:
-      app: frigate
+    app: frigate
   ports:
     - name: http
       protocol: TCP
@@ -102,7 +100,6 @@ spec:
       targetPort: 5000
 
 ---
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -122,23 +119,22 @@ spec:
         app: frigate-exporter
     spec:
       containers:
-      - name: frigate-exporter
-        image: ghcr.io/thelab-ms/frigate-exporter:main-8bf970e
-        env:
-        - name: POSTGRES_HOST
-          value: "psql-reporting.default.svc.cluster.local"
-        - name: FRIGATE_URL
-          value: http://frigate-unauthenticated.default.svc.cluster.local
-        - name: CAMERAS
-          value: Vent1,Vent2,Atrium1,Atrium2,Woodshop1,Woodshop2,Classroom1,Classroom2,Cleanroom
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: reporting-psql
-              key: password
+        - name: frigate-exporter
+          image: ghcr.io/thelab-ms/frigate-exporter:main-8bf970e
+          env:
+            - name: POSTGRES_HOST
+              value: "psql-reporting.default.svc.cluster.local"
+            - name: FRIGATE_URL
+              value: http://frigate-unauthenticated.default.svc.cluster.local
+            - name: CAMERAS
+              value: Vent1,Vent2,Atrium1,Atrium2,Woodshop1,Woodshop2,Classroom1,Classroom2,Cleanroom
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: reporting-psql
+                  key: password
 
 ---
-
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
@@ -155,7 +151,7 @@ spec:
       secretName: apps-wildcard-cert
   routes:
     - conditions:
-      - prefix: /
+        - prefix: /
       services:
         - name: frigate
           port: 80

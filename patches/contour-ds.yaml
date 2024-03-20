@@ -7,10 +7,10 @@ spec:
   template:
     spec:
       tolerations:
-      - key: "specialPodsOnly"
-        value: "please"
-        operator: "Equal"
-        effect: "NoSchedule"
+        - key: "specialPodsOnly"
+          value: "please"
+          operator: "Equal"
+          effect: "NoSchedule"
       containers:
         - name: envoy
           ports:

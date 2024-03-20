@@ -17,49 +17,49 @@ spec:
         app: gliderbot
     spec:
       containers:
-      - name: gliderbot
-        # Image is set in the deploy github action
-        env:
-        - name: "DISCORD_MEMBERSHIP_ROLE"
-          value: "814348587424022528"
-        - name: "DISCORD_LEADERSHIP_ROLE"
-          value: "814154862777335876"
-        - name: "CLIENT_ID"
-          value: "810302178455322645"
-        - name: "GUILD_ID"
-          value: "690314626289631294"
-        - name: "CHANNEL_ID"
-          value: "1017100056886784061"
-        - name: "KEYCLOAK_URL"
-          value: "https://keycloak.apps.thelab.ms"
-        - name: "KEYCLOAK_REALM"
-          value: "master"
-        - name: "KEYCLOAK_USER"
-          value: "discordbot"
-        - name: "KEYCLOAK_MEMBERSHIP_GROUP"
-          value: "4eea9c17-f9b1-41eb-8f25-721ae04b66f6"
-        - name: "KEYCLOAK_LEADERSHIP_GROUP"
-          value: "29146cfe-15d2-46dc-9b3b-3a176b74afbb"
-        - name: "HOMEASSISTANT_URL"
-          value: "https://homeassistant.apps.thelab.ms"
-        - name: CONFIG
-          valueFrom:
-            secretKeyRef:
-              name: gliderbot
-              key: config
-        - name: DISCORD_TOKEN
-          valueFrom:
-            secretKeyRef:
-              name: gliderbot
-              key: discord-token
-        # TODO: Update the gliderbot to support the k8s injected keycloak creds
-        - name: KEYCLOAK_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: gliderbot
-              key: keycloak-pass
-        - name: "HOMEASSISTANT_API_TOKEN"
-          valueFrom:
-            secretKeyRef:
-              name: gliderbot
-              key: homeassistant-api-token
+        - name: gliderbot
+          # Image is set in the deploy github action
+          env:
+            - name: "DISCORD_MEMBERSHIP_ROLE"
+              value: "814348587424022528"
+            - name: "DISCORD_LEADERSHIP_ROLE"
+              value: "814154862777335876"
+            - name: "CLIENT_ID"
+              value: "810302178455322645"
+            - name: "GUILD_ID"
+              value: "690314626289631294"
+            - name: "CHANNEL_ID"
+              value: "1017100056886784061"
+            - name: "KEYCLOAK_URL"
+              value: "https://keycloak.apps.thelab.ms"
+            - name: "KEYCLOAK_REALM"
+              value: "master"
+            - name: "KEYCLOAK_USER"
+              value: "discordbot"
+            - name: "KEYCLOAK_MEMBERSHIP_GROUP"
+              value: "4eea9c17-f9b1-41eb-8f25-721ae04b66f6"
+            - name: "KEYCLOAK_LEADERSHIP_GROUP"
+              value: "29146cfe-15d2-46dc-9b3b-3a176b74afbb"
+            - name: "HOMEASSISTANT_URL"
+              value: "https://homeassistant.apps.thelab.ms"
+            - name: CONFIG
+              valueFrom:
+                secretKeyRef:
+                  name: gliderbot
+                  key: config
+            - name: DISCORD_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: gliderbot
+                  key: discord-token
+            # TODO: Update the gliderbot to support the k8s injected keycloak creds
+            - name: KEYCLOAK_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: gliderbot
+                  key: keycloak-pass
+            - name: "HOMEASSISTANT_API_TOKEN"
+              valueFrom:
+                secretKeyRef:
+                  name: gliderbot
+                  key: homeassistant-api-token

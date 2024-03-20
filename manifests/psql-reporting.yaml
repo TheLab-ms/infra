@@ -18,17 +18,17 @@ spec:
     spec:
       nodeName: supermicro1
       containers:
-      - name: psql
-        image: postgres
-        env:
-        - name: POSTGRES_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: reporting-psql
-              key: password
-        volumeMounts:
-          - name: data
-            mountPath: /var/lib/postgresql/data
+        - name: psql
+          image: postgres
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: reporting-psql
+                  key: password
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
 
       volumes:
         - name: data
@@ -36,7 +36,6 @@ spec:
             path: /opt/reporting-psql
 
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
@@ -44,7 +43,7 @@ metadata:
 spec:
   clusterIP: None
   selector:
-      app: psql-reporting
+    app: psql-reporting
   ports:
     - name: psql
       protocol: TCP

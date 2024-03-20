@@ -9,13 +9,12 @@ spec:
       secretName: wildcard-cert
   routes:
     - conditions:
-      - prefix: /
+        - prefix: /
       requestRedirectPolicy:
         hostname: docuseal.apps.thelab.ms
         path: /d/rzCA7aZaUrBfLH
 
 ---
-
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
@@ -27,13 +26,12 @@ spec:
       secretName: wildcard-cert
   routes:
     - conditions:
-      - prefix: /
+        - prefix: /
       requestRedirectPolicy:
         hostname: discord.gg
         path: /6zqaP8e5q4
 
 ---
-
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
@@ -45,13 +43,12 @@ spec:
       secretName: wildcard-cert
   routes:
     - conditions:
-      - prefix: /
+        - prefix: /
       requestRedirectPolicy:
         hostname: wiki.apps.thelab.ms
         path: /en/join
 
 ---
-
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
@@ -63,13 +60,12 @@ spec:
       secretName: wildcard-cert
   routes:
     - conditions:
-      - prefix: /
+        - prefix: /
       requestRedirectPolicy:
         hostname: wiki.apps.thelab.ms
         path: /en/kb-migration
 
 ---
-
 apiVersion: projectcontour.io/v1
 kind: HTTPProxy
 metadata:
@@ -81,6 +77,6 @@ spec:
       secretName: wildcard-cert
   routes:
     - conditions:
-      - prefix: /
+        - prefix: /
       requestRedirectPolicy:
         hostname: wiki.apps.thelab.ms
