@@ -6,7 +6,38 @@ Commits to main go directly to production so be safe out there.
 Or `make apply` to deploy locally.
 
 
-## Provisioning
+## Network
+
+TheLab has three wifi access points, a router, and a switch.
+
+The network is divided up into several subnets each on their own vlan.
+
+- Members: 10.200.1.0/24
+- Members Static IPs: 10.200.0.0/24
+- Infrastructure: 10.200.10.0/24
+- Cameras: 10.200.20.0/24
+- Access Control: 10.220.4.0/24
+
+### Important Debugging Info
+
+- 10.200.10.1: Mikrotik router web interface
+- 10.200.10.2: Cisco network switch
+
+Port 48 of the switch is in the infrastructure VLAN - use that to debug if APs are down.
+
+### Switch VLAN Assignment
+
+The switch has 4 obvious bays of ports, each assigned to a VLAN like:
+
+- Cameras
+- Members
+- Members
+- Access Control
+- (port 48 only) Infrastructure
+
+## Bootstrapping
+
+## Server Provisioning
 
 - Imaged with a flash drive + ubuntu-23.04-live-server-amd64.iso (23ed9d0689ee04b4dafbc575523fb8a5)
   - I couldn't login to the IPMI, kicked it old school with a monitor and keyboard instead
@@ -14,8 +45,7 @@ Or `make apply` to deploy locally.
 - Configured static IP
 - Enabled passwordless sudo
 
-
-## Kubernetes Bootstrapping
+## Kubernetes
 
 Install k3s with these flags:
 
