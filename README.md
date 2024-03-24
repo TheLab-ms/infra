@@ -35,6 +35,23 @@ The switch has 4 obvious bays of ports, each assigned to a VLAN like:
 - Access Control
 - (port 48 only) Infrastructure
 
+
+## Servers
+
+There are two main servers in the rack:
+
+- supermicro1: 16/32 general purpose, k8s control plane host
+- supermicro2: 8/12+gpu, mostly just runs Frigate
+
+You shouldn't ever need to touch them directly, just get the kubeconfig from someone to configure k8s stuff with kubectl + this repo.
+
+
+## Tunnel
+
+There's a small Azure VM used to serve a wireguard tunnel to TheLab, both for leadership vpn access and general internet ingress.
+The idea is that the VM is too small for our lan to get ddos'd lol (maybe rate limiting wouldn't be a bad idea in the future though).
+
+
 ## Bootstrapping
 
 ## Server Provisioning
