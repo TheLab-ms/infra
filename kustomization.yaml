@@ -1,70 +1,71 @@
 images:
-- name: access-controller-controller
-  newName: ghcr.io/thelab-ms/access-controller-controller
-  newTag: main-b26e1cb
+  - name: access-controller-controller
+    newName: ghcr.io/thelab-ms/access-controller-controller
+    newTag: main-b26e1cb
 
-- name: docuseal
-  newName: docker.io/docuseal/docuseal
-  digest: sha256:0e38d295c72f415ec647e8bfb52263703beb78ca725b2b67e52d0eb8e2bf1586
+  - name: docuseal
+    newName: docker.io/docuseal/docuseal
+    digest: sha256:0e38d295c72f415ec647e8bfb52263703beb78ca725b2b67e52d0eb8e2bf1586
 
-- name: fobsvr
-  newName: ghcr.io/thelab-ms/fobsvr
-  newTag: "main-fb4208c"
+  - name: fobsvr
+    newName: ghcr.io/thelab-ms/fobsvr
+    newTag: "main-fb4208c"
 
-- name: frigate
-  newName: ghcr.io/blakeblackshear/frigate
-  newTag: "0.12.1"
+  - name: frigate
+    newName: ghcr.io/blakeblackshear/frigate
+    newTag: "0.12.1"
 
-- name: gliderbot
-  newName: ghcr.io/thelab-ms/gliderbot
-  digest: sha256:6043ad32f52e87a86c47af60397dd97df0c1b8acafbc120e1a8001f6d894ea09
+  - name: gliderbot
+    newName: ghcr.io/thelab-ms/gliderbot
+    digest: sha256:6043ad32f52e87a86c47af60397dd97df0c1b8acafbc120e1a8001f6d894ea09
 
-- name: homeassistant
-  newName: ghcr.io/home-assistant/home-assistant
-  newTag: "2023.11.3"
+  - name: homeassistant
+    newName: ghcr.io/home-assistant/home-assistant
+    newTag: "2023.11.3"
 
-- name: grafana
-  newName: docker.io/grafana/grafana-oss
-  newTag: "10.0.0"
+  - name: grafana
+    newName: docker.io/grafana/grafana-oss
+    newTag: "10.0.0"
 
-- name: keycloak
-  newName: ghcr.io/thelab-ms/keycloak-extensions
-  newTag: main-ce5b2d5
+  - name: keycloak
+    newName: ghcr.io/thelab-ms/keycloak-extensions
+    newTag: main-ce5b2d5
 
-- name: nvidia-device-plugin
-  newName: nvcr.io/nvidia/k8s-device-plugin
-  newTag: v0.14.3
+  - name: nvidia-device-plugin
+    newName: nvcr.io/nvidia/k8s-device-plugin
+    newTag: v0.14.3
 
-- name: prometheus
-  newName: quay.io/prometheus/prometheus
-  newTag: v2.48.0
+  - name: prometheus
+    newName: quay.io/prometheus/prometheus
+    newTag: v2.48.0
 
-- name: prom-node-exporter
-  newName: quay.io/prometheus/node-exporter
-  newTag: v1.7.0
+  - name: prom-node-exporter
+    newName: quay.io/prometheus/node-exporter
+    newTag: v1.7.0
 
-- name: prom-mikrotik-exporter
-  newName: ghcr.io/akpw/mktxp
-  newTag: gha-5421251592
+  - name: prom-mikrotik-exporter
+    newName: ghcr.io/akpw/mktxp
+    newTag: gha-5421251592
 
-- name: postgres
-  newName: docker.io/postgres
-  newTag: "15.3"
+  - name: postgres
+    newName: docker.io/postgres
+    newTag: "15.3"
 
-- name: samba
-  newName: docker.io/dperson/samba
-  newTag: latest # yolo
+  - name: samba
+    newName: docker.io/dperson/samba
+    newTag: latest # yolo
 
-- name: wikijs
-  newName: docker.io/requarks/wiki
-  digest: sha256:56000cf6a1df13bb9087897c4722fe25f4fd76491f92e746560e509b67e28a58
+  - name: wikijs
+    newName: docker.io/requarks/wiki
+    digest: sha256:56000cf6a1df13bb9087897c4722fe25f4fd76491f92e746560e509b67e28a58
 
-- name: oauth2-proxy
-  newName: quay.io/oauth2-proxy/oauth2-proxy
-  newTag: v7.4.0
+  - name: oauth2-proxy
+    newName: quay.io/oauth2-proxy/oauth2-proxy
+    newTag: v7.4.0
 
 resources:
   - manifests/access-controller-controller.yaml
+  - manifests/backups.yaml
   - manifests/cert-manager.ext.yaml
   - manifests/cert-manager.yaml
   - manifests/contour.ext.yaml
@@ -110,14 +111,18 @@ patches:
       annotationSelector: "oauth-sidecar=yes"
 
 configMapGenerator:
-- name: prom-config
-  files:
-  - configs/prometheus.yml
+  - name: prom-config
+    files:
+      - configs/prometheus.yml
 
-- name: frigate-config
-  files:
-  - configs/frigate.yml
+  - name: frigate-config
+    files:
+      - configs/frigate.yml
 
-- name: grafana-config
-  files:
-  - configs/grafana.ini
+  - name: grafana-config
+    files:
+      - configs/grafana.ini
+
+  - name: backup-script
+    files:
+      - configs/backup.py
