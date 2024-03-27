@@ -1,0 +1,246 @@
+Current configuration : 6100 bytes
+!
+! Last configuration change at 03:06:26 UTC Wed Mar 10 1993 by aadmin
+!
+version 15.0
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname switch01
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 REDACTED
+enable password REDACTED
+!
+username aadmin password 0 REDACTED
+no aaa new-model
+system mtu routing 1500
+!
+!
+ip domain-name cisco
+!
+mls qos srr-queue output cos-map queue 1 threshold 3 5
+mls qos srr-queue output cos-map queue 2 threshold 3 3 6 7
+mls qos srr-queue output cos-map queue 3 threshold 3 2 4
+mls qos srr-queue output cos-map queue 4 threshold 2 1
+mls qos srr-queue output cos-map queue 4 threshold 3 0
+mls qos
+!
+crypto pki trustpoint TP-self-signed-2004213376
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2004213376
+ revocation-check none
+ rsakeypair TP-self-signed-2004213376
+!
+!
+lacp system-priority 65535
+!
+!
+spanning-tree mode pvst
+spanning-tree extend system-id
+!
+vlan internal allocation policy ascending
+!
+ip ssh version 2
+!
+!
+interface Port-channel1
+ switchport mode trunk
+!
+interface FastEthernet0/1
+ switchport access vlan 220
+!
+interface FastEthernet0/2
+ switchport access vlan 220
+!
+interface FastEthernet0/3
+ switchport access vlan 220
+!
+interface FastEthernet0/4
+ switchport access vlan 220
+!
+interface FastEthernet0/5
+ switchport access vlan 220
+!
+interface FastEthernet0/6
+ switchport access vlan 220
+!
+interface FastEthernet0/7
+ switchport access vlan 220
+!
+interface FastEthernet0/8
+ switchport access vlan 220
+!
+interface FastEthernet0/9
+ switchport access vlan 220
+!
+interface FastEthernet0/10
+ switchport access vlan 220
+!
+interface FastEthernet0/11
+ switchport access vlan 220
+!
+interface FastEthernet0/12
+ switchport access vlan 220
+!
+interface FastEthernet0/13
+ switchport access vlan 201
+!
+interface FastEthernet0/14
+ switchport access vlan 201
+!
+interface FastEthernet0/15
+ switchport access vlan 201
+!
+interface FastEthernet0/16
+ switchport access vlan 201
+!
+interface FastEthernet0/17
+ switchport access vlan 201
+!
+interface FastEthernet0/18
+ switchport access vlan 201
+!
+interface FastEthernet0/19
+ switchport access vlan 201
+!
+interface FastEthernet0/20
+ switchport access vlan 201
+!
+interface FastEthernet0/21
+ switchport access vlan 201
+!
+interface FastEthernet0/22
+ switchport access vlan 201
+!
+interface FastEthernet0/23
+ switchport access vlan 201
+!
+interface FastEthernet0/24
+ switchport access vlan 201
+!
+interface FastEthernet0/25
+ switchport access vlan 201
+!
+interface FastEthernet0/26
+ switchport access vlan 201
+!
+interface FastEthernet0/27
+ switchport access vlan 201
+!
+interface FastEthernet0/28
+ switchport access vlan 201
+!
+interface FastEthernet0/29
+ switchport access vlan 201
+!
+interface FastEthernet0/30
+ switchport access vlan 201
+!
+interface FastEthernet0/31
+ switchport access vlan 201
+!
+interface FastEthernet0/32
+ switchport access vlan 201
+!
+interface FastEthernet0/33
+ switchport access vlan 201
+!
+interface FastEthernet0/34
+ switchport access vlan 201
+!
+interface FastEthernet0/35
+ switchport access vlan 201
+!
+interface FastEthernet0/36
+ switchport access vlan 201
+!
+interface FastEthernet0/37
+ switchport access vlan 240
+!
+interface FastEthernet0/38
+ switchport access vlan 240
+!
+interface FastEthernet0/39
+ switchport access vlan 240
+!
+interface FastEthernet0/40
+ switchport access vlan 240
+!
+interface FastEthernet0/41
+ switchport access vlan 240
+!
+interface FastEthernet0/42
+ switchport access vlan 240
+!
+interface FastEthernet0/43
+ switchport access vlan 240
+!
+interface FastEthernet0/44
+ switchport access vlan 240
+!
+interface FastEthernet0/45
+ switchport access vlan 240
+!
+interface FastEthernet0/46
+ switchport access vlan 240
+!
+interface FastEthernet0/47
+ switchport access vlan 240
+!
+interface FastEthernet0/48
+ description "Admin Port"
+ switchport access vlan 210
+!
+interface GigabitEthernet0/1
+!
+interface GigabitEthernet0/2
+!
+interface GigabitEthernet0/3
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface GigabitEthernet0/4
+ switchport mode trunk
+ channel-group 1 mode active
+!
+interface Vlan1
+ no ip address
+ no ip route-cache
+!
+interface Vlan201
+ no ip address
+ no ip route-cache
+!
+interface Vlan210
+ ip address 10.200.10.2 255.255.255.0
+ no ip route-cache
+!
+interface Vlan220
+ no ip address
+ no ip route-cache
+!
+interface Vlan240
+ no ip address
+ no ip route-cache
+!
+ip default-gateway 10.200.10.1
+ip http server
+ip http secure-server
+logging esm config
+!
+line con 0
+line vty 0 4
+ password REDACTED
+ login local
+ transport input ssh
+line vty 5 15
+ password REDACTED
+ login
+ transport input ssh
+!
+end
