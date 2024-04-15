@@ -34,7 +34,7 @@ spec:
             - name: KEYCLOAK_MEMBERS_GROUP_ID
               value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
             - name: SELF_URL
-              value: https://profile.staging.apps.thelab.ms
+              value: https://profile-staging.thelab.ms
             - name: DOCUSEAL_URL
               value: https://docuseal.apps.thelab.ms
             - name: DOCUSEAL_TOKEN
@@ -76,7 +76,7 @@ spec:
             - name: OAUTH2_PROXY_SKIP_AUTH_ROUTES
               value: '.*(signup|assets|webhooks|events|\/f\/).*'
             - name: OAUTH2_PROXY_REDIRECT_URL
-              value: "https://profile.staging.apps.thelab.ms/oauth2/callback"
+              value: "https://profile-staging.thelab.ms/oauth2/callback"
 
       volumes:
         - name: keycloak-creds
@@ -104,3 +104,25 @@ spec:
       protocol: TCP
       port: 80
       targetPort: 8880
+
+---
+apiVersion: projectcontour.io/v1
+kind: HTTPProxy
+metadata:
+  name: profile-staging
+spec:
+  virtualhost:
+    fqdn: profile-staging.thelab.ms
+    rateLimitPolicy:
+      local:
+        requests: 50
+        unit: second
+        burst: 50
+    tls:
+      secretName: wildcard-cert
+  routes:
+    - conditions:
+        - prefix: /
+      services:
+        - name: profile
+          port: 80
