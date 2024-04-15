@@ -124,5 +124,5 @@ spec:
     - conditions:
         - prefix: /
       services:
-        - name: profile
+        - name: profile-staging
           port: 80
