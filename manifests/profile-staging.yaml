@@ -32,7 +32,7 @@ spec:
             - name: KEYCLOAK_URL
               value: http://keycloak.default.svc.cluster.local
             - name: KEYCLOAK_MEMBERS_GROUP_ID
-              value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
+              value: 032aafbc-76ad-4b16-9e72-e814a5d341d7
             - name: SELF_URL
               value: https://profile-staging.thelab.ms
             - name: DOCUSEAL_URL
