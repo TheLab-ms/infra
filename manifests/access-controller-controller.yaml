@@ -26,7 +26,7 @@ spec:
               mountPath: /etc/ssl/certs
           env:
             - name: SWIPE_SCRAPE_INTERVAL
-              value: "1m"
+              value: "10s"
             - name: POSTGRES_HOST
               value: "psql-reporting.default.svc.cluster.local"
             - name: ACCESS_CONTROL_HOST
