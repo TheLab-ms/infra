@@ -45,8 +45,8 @@ spec:
     - conditions:
         - prefix: /
       requestRedirectPolicy:
-        hostname: wiki.apps.thelab.ms
-        path: /en/join
+        hostname: profile.thelab.ms
+        path: /signup
 
 ---
 apiVersion: projectcontour.io/v1
