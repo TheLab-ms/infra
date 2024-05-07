@@ -1,7 +1,7 @@
 images:
   - name: access-controller-controller
     newName: ghcr.io/thelab-ms/access-controller-controller
-    newTag: main-b26e1cb
+    newTag: main-2640dd2
 
   - name: docuseal
     newName: docker.io/docuseal/docuseal
