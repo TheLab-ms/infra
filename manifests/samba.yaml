@@ -32,3 +32,17 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /share
+          livenessProbe:
+            exec:
+              command:
+                - /usr/bin/smbclient
+                - '\\localhost\TheLabNAS'
+                - -U
+                - foo
+                - -N
+                - -m
+                - SMB3
+                - -c
+                - "ls"
+            initialDelaySeconds: 3
+            periodSeconds: 5
