@@ -44,6 +44,12 @@ spec:
                 secretKeyRef:
                   name: reporting-psql
                   key: password
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            httpGet:
+              path: /livez
+              port: 8888
       volumes:
         - name: keycloak-creds
           csi:
