@@ -127,7 +127,7 @@ spec:
             - name: FRIGATE_URL
               value: http://frigate-unauthenticated.default.svc.cluster.local
             - name: CAMERAS
-              value: Vent1,Vent2,Atrium1,Atrium2,Woodshop1,Woodshop2,Classroom1,Classroom2,Cleanroom
+              value: Vent,Atrium,Woodshop,Classroom1,Classroom2,Cleanroom
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
