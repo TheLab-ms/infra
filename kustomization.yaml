@@ -73,7 +73,6 @@ resources:
   - manifests/homeassistant.yaml
   - manifests/keycloak.yaml
   - manifests/nvidia.ext.yaml
-  - manifests/profile-staging.yaml
   - manifests/profile.yaml
   - manifests/prom.yaml
   - manifests/psql-keycloak.yaml
