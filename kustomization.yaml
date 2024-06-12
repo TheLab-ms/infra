@@ -1,7 +1,7 @@
 images:
   - name: profile-server
     newName: ghcr.io/thelab-ms/profile
-    newTag: sha-fa50574
+    newTag: sha-edc5c9d
 
   - name: profile-visit-check-job
     newName: ghcr.io/thelab-ms/profile/visit-check-job

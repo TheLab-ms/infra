@@ -46,11 +46,6 @@ spec:
                 secretKeyRef:
                   name: docuseal
                   key: token
-            - name: DISCORD_WEBHOOK_URL
-              valueFrom:
-                secretKeyRef:
-                  name: discord-token
-                  key: webhookURL
             - name: STRIPE_KEY
               valueFrom:
                 secretKeyRef:
@@ -77,6 +72,13 @@ spec:
                   key: password
             - name: DISCORD_GUILD_ID
               value: "690314626289631294"
+            - name: DISCORD_APP_ID
+              value: "1121532987486523503"
+            - name: DISCORD_EVENTS_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: discord-token
+                  key: eventsToken
             - name: DISCORD_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -176,7 +178,7 @@ spec:
           containers:
             - name: job
               imagePullPolicy: IfNotPresent
-              image: visit-check-job
+              image: profile-visit-check-job
               volumeMounts:
                 - name: keycloak-creds
                   mountPath: /var/lib/keycloak
