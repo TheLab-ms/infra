@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: svc
-          image: ghcr.io/thelab-ms/profile:sha-109b545
+          image: profile-server
           volumeMounts:
             - name: keycloak-creds
               mountPath: /var/lib/keycloak
@@ -176,7 +176,7 @@ spec:
           containers:
             - name: job
               imagePullPolicy: IfNotPresent
-              image: ghcr.io/thelab-ms/profile/visit-check-job:sha-109b545
+              image: visit-check-job
               volumeMounts:
                 - name: keycloak-creds
                   mountPath: /var/lib/keycloak
@@ -220,7 +220,7 @@ spec:
           containers:
             - name: job
               imagePullPolicy: IfNotPresent
-              image: ghcr.io/thelab-ms/profile/paypal-check-job:sha-109b545
+              image: profile-paypal-check-job
               volumeMounts:
                 - name: keycloak-creds
                   mountPath: /var/lib/keycloak

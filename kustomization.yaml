@@ -1,4 +1,16 @@
 images:
+  - name: profile-server
+    newName: ghcr.io/thelab-ms/profile
+    newTag: sha-fa50574
+
+  - name: profile-visit-check-job
+    newName: ghcr.io/thelab-ms/profile/visit-check-job
+    newTag: sha-fa50574
+
+  - name: profile-paypal-check-job
+    newName: ghcr.io/thelab-ms/profile/paypal-check-job
+    newTag: sha-fa50574
+
   - name: access-controller-controller
     newName: ghcr.io/thelab-ms/access-controller-controller
     newTag: main-28812bd
