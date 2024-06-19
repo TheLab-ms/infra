@@ -261,3 +261,92 @@ spec:
               hostPath:
                 path: /etc/ssl/certs/
                 type: Directory
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profile-async
+  labels:
+    app: profile-async
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: profile-async
+  template:
+    metadata:
+      labels:
+        app: profile-async
+    spec:
+      containers:
+        - name: svc
+          image: profile-async
+          volumeMounts:
+            - name: keycloak-creds
+              mountPath: /var/lib/keycloak
+            - name: root-ca
+              mountPath: /etc/ssl/certs
+          env:
+            - name: KEYCLOAK_REGISTER_WEBHOOK
+              value: "true"
+            - name: KEYCLOAK_URL
+              value: http://keycloak.default.svc.cluster.local
+            - name: KEYCLOAK_MEMBERS_GROUP_ID
+              value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
+            - name: SELF_URL
+              value: http://profile-async.default.svc.cluster.local
+            - name: EVENT_PSQL_USERNAME
+              value: postgres
+            - name: EVENT_PSQL_ADDR
+              value: "psql-reporting.default.svc.cluster.local"
+            - name: EVENT_PSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: reporting-psql
+                  key: password
+            - name: DISCORD_GUILD_ID
+              value: "690314626289631294"
+            - name: DISCORD_APP_ID
+              value: "1121532987486523503"
+            - name: DISCORD_MEMBER_ROLE_ID
+              value: "1252789548073619458"
+            - name: DISCORD_BOT_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: discord-token
+                  key: token
+          readinessProbe:
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            httpGet:
+              path: /health
+              port: 8080
+
+      volumes:
+        - name: keycloak-creds
+          csi:
+            driver: identity.keycloak.org
+            volumeAttributes:
+              clientID: profile-app
+        - name: root-ca
+          hostPath:
+            path: /etc/ssl/certs/
+            type: Directory
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: profile-async
+spec:
+  type: ClusterIP
+  selector:
+    app: profile-async
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
