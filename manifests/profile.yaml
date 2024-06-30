@@ -74,11 +74,11 @@ spec:
               value: "690314626289631294"
             - name: DISCORD_APP_ID
               value: "1121532987486523503"
-            - name: DISCORD_EVENTS_BOT_TOKEN
+            - name: DISCORD_EVENT_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
                   name: discord-token
-                  key: eventsToken
+                  key: token
             - name: DISCORD_BOT_TOKEN
               valueFrom:
                 secretKeyRef:
@@ -296,8 +296,10 @@ spec:
               value: http://keycloak.default.svc.cluster.local
             - name: KEYCLOAK_MEMBERS_GROUP_ID
               value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
-            - name: SELF_URL
+            - name: WEBHOOK_URL
               value: http://profile-async.default.svc.cluster.local
+            - name: SELF_URL
+              value: https://profile.thelab.ms
             - name: EVENT_PSQL_USERNAME
               value: postgres
             - name: EVENT_PSQL_ADDR
