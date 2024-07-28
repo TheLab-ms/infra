@@ -21,29 +21,17 @@ detect:
   fps: 1
 
 cameras:
-  AtriumDoor:
-    ffmpeg:
-      hwaccel_args: preset-nvidia-h264
-      inputs:
-        - path: rtsp://admin:a1234567@10.200.2.12/live
-
-  Kitchen:
-    ffmpeg:
-      hwaccel_args: preset-nvidia-h264
-      inputs:
-        - path: rtsp://admin:a1234567@10.200.2.10/live
-
   Vent:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
         - path: rtsp://admin:thelab.ms@10.200.2.17:554/cam/realmonitor?channel=1&subtype=0
 
-  # Atrium1:
-  #   ffmpeg:
-  #     hwaccel_args: preset-nvidia-h264
-  #     inputs:
-  #       - path: rtsp://10.200.2.14:554/Streaming/Channels/101
+  Dungeon:
+    ffmpeg:
+      hwaccel_args: preset-nvidia-h264
+      inputs:
+        - path: rtsp://admin:thelab.ms@10.200.2.6:554/cam/realmonitor?channel=1&subtype=0
 
   Atrium:
     ffmpeg:
@@ -57,31 +45,9 @@ cameras:
       inputs:
         - path: rtsp://admin:thelab.ms@10.200.2.18:554/cam/realmonitor?channel=1&subtype=0
 
-  # Woodshop2:
-  #   ffmpeg:
-  #     hwaccel_args: preset-nvidia-h264
-  #     inputs:
-  #       - path: rtsp://10.200.2.15:554/Streaming/Channels/101
-
-  Classroom1:
+  Classroom:
     ffmpeg:
       hwaccel_args: preset-nvidia-h264
       inputs:
         - path: rtsp://10.200.2.16:554/Streaming/Channels/101
-    motion:
-      mask:
-        - 109,163,105,28,28,33,39,182
-        - 399,0,385,58,307,44,297,0
-        - 340,360,548,360,545,140,345,182
 
-  Classroom2:
-    ffmpeg:
-      hwaccel_args: preset-nvidia-h264
-      inputs:
-        - path: rtsp://admin:a1234567@10.200.2.7/live
-
-  Cleanroom:
-    ffmpeg:
-      hwaccel_args: preset-nvidia-h264
-      inputs:
-        - path: rtsp://admin:a1234567@10.200.2.8/live
