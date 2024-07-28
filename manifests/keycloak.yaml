@@ -6,6 +6,8 @@ metadata:
     app: keycloak
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: keycloak
@@ -20,6 +22,8 @@ spec:
           args:
             - start
             - --optimized
+            - --hostname-strict
+            - "false"
           env:
             - name: KEYCLOAK_ADMIN
               value: "cto"
@@ -51,12 +55,6 @@ spec:
                 secretKeyRef:
                   name: keycloak-db
                   key: password
-          readinessProbe:
-            initialDelaySeconds: 2
-            periodSeconds: 5
-            httpGet:
-              path: /health/ready
-              port: 8080
 
 ---
 apiVersion: v1
