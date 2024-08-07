@@ -132,9 +132,10 @@ data:
     #   - "grpc_status"
     #   - "grpc_status_number"
     #
-    # default-http-versions:
+    # TODO(jordan) too lazy to make a kustomize patch for this nested yaml madness
+    default-http-versions:
+    - "HTTP/1.1"
     # - "HTTP/2"
-    # - "HTTP/1.1"
     #
     # The following shows the default proxy timeout settings.
     # timeouts:

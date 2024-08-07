@@ -41,7 +41,7 @@ images:
 
   - name: keycloak
     newName: ghcr.io/thelab-ms/keycloak-extensions
-    newTag: main-f5ee0d5
+    newTag: main-0aa01c5
 
   - name: nvidia-device-plugin
     newName: nvcr.io/nvidia/k8s-device-plugin
