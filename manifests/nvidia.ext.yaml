@@ -44,7 +44,7 @@ spec:
       # Below this was added and not part of the upstream manifest
       runtimeClassName: nvidia
       nodeSelector:
-        kubernetes.io/hostname: "supermicro2"
+        kubernetes.io/hostname: "supermicro1"
       tolerations:
         - key: specialPodsOnly
           operator: Exists

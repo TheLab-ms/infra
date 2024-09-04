@@ -8,7 +8,7 @@ Or `make apply` to deploy locally.
 
 ## Network
 
-TheLab has three wifi access points, a router, and a switch.
+TheLab has a handful of wifi access points, a router, and a switch.
 
 The network is divided up into several subnets each on their own vlan.
 
@@ -18,12 +18,10 @@ The network is divided up into several subnets each on their own vlan.
 - Cameras: 10.200.20.0/24
 - Access Control: 10.220.4.0/24
 
-### Important Debugging Info
+### IPs to Know
 
 - 10.200.10.1: Mikrotik router web interface
 - 10.200.10.2: Cisco network switch
-
-Port 48 of the switch is in the infrastructure VLAN - use that to debug if APs are down.
 
 ### Switch VLAN Assignment
 
@@ -31,28 +29,20 @@ The switch has 4 obvious bays of ports, each assigned to a VLAN like:
 
 - Cameras
 - Members
-- Members
+- Infrastructure
 - Access Control
-- (port 48 only) Infrastructure
-
 
 ## Servers
 
-There are two main servers in the rack:
+There are three Dell R710s below the network equipment rack.
+Each has two NICs and one out-of-band management port all on the infra network.
 
-- supermicro1: 16/32 general purpose, k8s control plane host
-- supermicro2: 8/12+gpu, mostly just runs Frigate
-
-You shouldn't ever need to touch them directly, just get the kubeconfig from someone to configure k8s stuff with kubectl + this repo.
-
+TODO: iDRAC login/setup
 
 ## Tunnel
 
 There's a small Azure VM used to serve a wireguard tunnel to TheLab, both for leadership vpn access and general internet ingress.
 The idea is that the VM is too small for our lan to get ddos'd lol (maybe rate limiting wouldn't be a bad idea in the future though).
-
-
-## Bootstrapping
 
 ## Server Provisioning
 

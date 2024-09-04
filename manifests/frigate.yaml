@@ -18,8 +18,8 @@ spec:
       labels:
         app: frigate
     spec:
-      nodeName: supermicro2
-      runtimeClassName: nvidia
+      # nodeName: supermicro1
+      # runtimeClassName: nvidia
 
       containers:
         - name: oauth2proxy
@@ -49,9 +49,9 @@ spec:
             httpGet:
               path: /api/
               port: 5000
-          resources:
-            limits:
-              nvidia.com/gpu: "1"
+          # resources:
+          #   limits:
+          #     nvidia.com/gpu: "1"
 
       volumes:
         - name: cache

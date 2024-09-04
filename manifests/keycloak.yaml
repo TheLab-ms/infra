@@ -22,8 +22,10 @@ spec:
           args:
             - start
             - --optimized
-            - --hostname-strict
-            - "false"
+            - --hostname
+            - "https://keycloak.apps.thelab.ms"
+            - --hostname-backchannel-dynamic
+            - "true"
           env:
             - name: KEYCLOAK_ADMIN
               value: "cto"

@@ -12,7 +12,7 @@ spec:
       - dns01:
           azureDNS:
             hostedZoneName: thelab.ms
-            resourceGroupName: thelab-ms
+            resourceGroupName: dns
             subscriptionID: 4eec622b-7eef-44e4-96e4-2b9fa2f21f07
             environment: AzurePublicCloud
             tenantID: f4ba79ec-fe30-424f-a96e-2de98f58f9b8
