@@ -37,9 +37,10 @@ The switch has 4 obvious bays of ports, each assigned to a VLAN like:
 There are three Dell R710s below the network equipment rack.
 Each has two NICs wired to the Cisco switch for bonded LACP links.
 They're running vanilla Ubuntu 24 LTS with 6 disk RAID 10 arrays and LACP interfaces configured by the installer.
+The only BIOS settings that are non-default: power recovery set to `on` in (weirdly) the System Security menu, with the startup delay set to `random` (to avoid flipping a breaker if they all fire up at once).
 
 There is a bin of spare disks on the shelves somewhere in case any of the active ones go pop.
 
-The tree nodes are named `foo`, `bar`, and `baz` and addressed 10.200.10.101, 10.200.10.102, etc.
+The three machines are named `foo`, `bar`, and `baz` and addressed 10.200.10.101, 10.200.10.102, etc.
 
 ## TODO: node bootstrapping, etc.
