@@ -25,7 +25,7 @@ images:
 
   - name: fobsvr
     newName: ghcr.io/thelab-ms/fobsvr
-    newTag: "main-fb4208c"
+    newTag: "main-c0e7787"
 
   - name: frigate
     newName: ghcr.io/blakeblackshear/frigate
@@ -94,7 +94,6 @@ resources:
   - manifests/psql-keycloak.yaml
   - manifests/psql-reporting.yaml
   - manifests/psql-wikijs.yaml
-  - manifests/redirects.yaml
   - manifests/samba.yaml
   - manifests/wikijs.yaml
 

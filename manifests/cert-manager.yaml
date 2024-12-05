@@ -10,16 +10,11 @@ spec:
       name: letsencrypt-prod
     solvers:
       - dns01:
-          azureDNS:
-            hostedZoneName: thelab.ms
-            resourceGroupName: dns
-            subscriptionID: 4eec622b-7eef-44e4-96e4-2b9fa2f21f07
-            environment: AzurePublicCloud
-            tenantID: f4ba79ec-fe30-424f-a96e-2de98f58f9b8
-            clientID: 846d6a2c-6fa0-48f5-b810-f997cf8d8e50
-            clientSecretSecretRef:
-              name: azure-sp
-              key: secret
+          cloudflare:
+            email: cto@thelab.ms
+            apiKeySecretRef:
+              name: cloudflare-auth
+              key: token
 
 ---
 apiVersion: cert-manager.io/v1
