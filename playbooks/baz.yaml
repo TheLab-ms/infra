@@ -1,5 +1,5 @@
-- name: foobar.thelab.ms
-  hosts: cloud
+- name: baz.thelab.ms
+  hosts: baz.thelab.ms
   tasks:
     - name: Write motd
       ansible.builtin.template:
