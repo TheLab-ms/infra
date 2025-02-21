@@ -1,0 +1,66 @@
+- name: Glider
+  hosts: onprem
+  tasks:
+   - name: Get API token from Conway
+     ansible.builtin.shell: 'echo "GLIDER_CONWAY_TOKEN=$(sqlite3 /opt/conway/conway.sqlite3 "SELECT token FROM api_tokens ORDER BY id DESC LIMIT 1")"'
+     register: token_output
+     delegate_to: foobar.thelab.ms
+
+   - name: Copy API token to Glider host
+     ansible.builtin.copy:
+       content: "{{ token_output.stdout }}"
+       dest: /etc/default/glider
+
+   - name: Copy Glider binary
+     notify: ["Restart Glider"]
+     ansible.builtin.copy:
+       src: "{{ playbook_dir }}/../../conway/build/glider"
+       dest: /usr/bin/glider
+       owner: root
+       group: root
+       mode: '0755'
+
+   - name: Create Glider directory
+     ansible.builtin.file:
+       path: /opt/glider
+       state: directory
+
+   - name: Create the Glider container unit 
+     notify: ["Restart Glider"]
+     containers.podman.podman_container:
+       name: glider
+       image: ubuntu:latest
+       state: quadlet
+       workdir: /opt/glider
+       net: thelab-overlay
+       command:
+        - /usr/bin/glider
+       env_file: /etc/default/glider # contains secrets
+       env:
+         GLIDER_CONWAY_URL: https://members.thelab.ms
+       volumes:
+        - /usr/bin/glider:/usr/bin/glider
+        - /opt/glider:/opt/glider
+        - /etc/ssl:/etc/ssl
+       quadlet_options:
+         - |
+           [Service]
+           Restart=always
+           RestartSec=2
+         - |
+           [Install]
+           WantedBy=default.target
+
+   - name: Start Glider
+     ansible.builtin.systemd:
+       name: glider
+       enabled: true
+       state: started
+       daemon_reload: true
+
+  handlers:
+    - name: Restart Glider
+      ansible.builtin.service:
+        name: glider
+        state: restarted
+

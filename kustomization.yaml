@@ -5,7 +5,7 @@ images:
 
   - name: profile-async
     newName: ghcr.io/thelab-ms/profile/profile-async
-    newTag: sha-b54dbfa
+    newTag: sha-1b937b7
 
   - name: profile-visit-check-job
     newName: ghcr.io/thelab-ms/profile/visit-check-job
@@ -83,19 +83,19 @@ resources:
   - manifests/contour.ext.yaml
   - manifests/docuseal.yaml
   - manifests/fobsvr.yaml
-  - manifests/frigate.yaml
+  # - manifests/frigate.yaml
   - manifests/gliderbot.yaml
   - manifests/grafana.yaml
   - manifests/homeassistant.yaml
   - manifests/keycloak.yaml
-  - manifests/nvidia.ext.yaml
+  # - manifests/nvidia.ext.yaml
   - manifests/profile.yaml
   - manifests/prom.yaml
   - manifests/psql-keycloak.yaml
   - manifests/psql-reporting.yaml
-  - manifests/psql-wikijs.yaml
+  # - manifests/psql-wikijs.yaml
   - manifests/samba.yaml
-  - manifests/wikijs.yaml
+  # - manifests/wikijs.yaml
 
 patches:
   - path: patches/contour-ds.yaml
@@ -125,9 +125,9 @@ configMapGenerator:
     files:
       - configs/prometheus.yml
 
-  - name: frigate-config
-    files:
-      - configs/frigate.yml
+  # - name: frigate-config
+  #   files:
+  #     - configs/frigate.yml
 
   - name: grafana-config
     files:

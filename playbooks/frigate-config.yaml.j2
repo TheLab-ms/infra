@@ -1,0 +1,65 @@
+version: 0.14
+mqtt:
+  enabled: false
+
+tls:
+  enabled: false
+
+record:
+  enabled: true
+  retain:
+    days: 7
+    mode: motion
+
+auth:
+  enabled: false
+
+proxy:
+  header_map:
+    user: x-forwarded-user
+
+motion:
+  frame_height: 25
+
+detect:
+  enabled: false
+  width: 640
+  height: 360
+  fps: 1
+
+cameras:
+  Vent:
+    ffmpeg:
+      inputs:
+        - path: rtsp://admin:thelab.ms@10.200.2.17:554/cam/realmonitor?channel=1&subtype=0
+
+  Storage:
+    ffmpeg:
+      inputs:
+        - path: rtsp://admin:thelab.ms@10.200.2.6:554/cam/realmonitor?channel=1&subtype=0
+
+  Atrium:
+    ffmpeg:
+      inputs:
+        - path: rtsp://admin:thelab.ms@10.200.2.13:554/cam/realmonitor?channel=1&subtype=0
+
+  Woodshop:
+    ffmpeg:
+      inputs:
+        - path: rtsp://admin:thelab.ms@10.200.2.18:554/cam/realmonitor?channel=1&subtype=0
+
+  Crafting:
+    ffmpeg:
+      inputs:
+        - path: rtsp://10.200.2.16:554/Streaming/Channels/101
+
+#  PlaOnly:
+#    ffmpeg:
+#      inputs:
+#        - path: rtsps://bblp:REDACTED@10.200.0.35:322/streaming/live/1
+#
+#  Giga:
+#    ffmpeg:
+#      inputs:
+#        - path: rtsps://bblp:REDACTED@10.200.0.34:322/streaming/live/1
+

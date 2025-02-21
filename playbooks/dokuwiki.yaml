@@ -1,0 +1,55 @@
+- name: Dokuwiki
+  hosts: cloud
+  tasks:
+   - name: Install Podman
+     package:
+       name: "podman"
+       state: present
+
+   - name: Create Dokuwiki user
+     ansible.builtin.user:
+       name: dokuwiki
+       comment: Dokuwiki Service
+       uid: 1001
+
+   - name: Create Dokuwiki media directory
+     ansible.builtin.file:
+       path: /opt/dokuwiki
+       state: directory
+       owner: 1001
+       group: 1001
+
+   - name: Create the Dokuwiki container unit 
+     notify: ["Restart Dokuwiki"]
+     containers.podman.podman_container:
+       name: dokuwiki
+       image: docker.io/dokuwiki/dokuwiki:2024-02-06b
+       state: quadlet
+       user: 1001
+       net: thelab-overlay
+       volumes:
+        - /opt/dokuwiki:/storage
+       publish:
+          - "8081:8080"
+       quadlet_options:
+         - |
+           [Service]
+           Restart=always
+           RestartSec=2
+         - |
+           [Install]
+           WantedBy=default.target
+
+   - name: Start Dokuwiki
+     ansible.builtin.systemd:
+       name: dokuwiki
+       enabled: true
+       state: started
+       daemon_reload: true
+
+  handlers:
+    - name: Restart Dokuwiki
+      ansible.builtin.service:
+        name: dokuwiki
+        state: restarted
+

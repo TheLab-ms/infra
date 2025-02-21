@@ -1,0 +1,7 @@
+- name: Message of the Day
+  hosts: all
+  tasks:
+   - name: Write motd
+     ansible.builtin.template:
+       src: motd.j2
+       dest: /etc/motd

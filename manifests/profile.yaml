@@ -162,48 +162,48 @@ spec:
           port: 80
 
 ---
-apiVersion: batch/v1
-kind: CronJob
-metadata:
-  name: visit-check-job
-spec:
-  schedule: "0 5 * * *"
-  jobTemplate:
-    spec:
-      backoffLimit: 4
-      template:
-        spec:
-          nodeName: supermicro1
-          restartPolicy: Never
-          containers:
-            - name: job
-              imagePullPolicy: IfNotPresent
-              image: profile-visit-check-job
-              volumeMounts:
-                - name: keycloak-creds
-                  mountPath: /var/lib/keycloak
-              env:
-                - name: SELF_URL
-                  value: https://profile.thelab.ms
-                - name: KEYCLOAK_URL
-                  value: http://keycloak.default.svc.cluster.local
-                - name: KEYCLOAK_MEMBERS_GROUP_ID
-                  value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
-                - name: EVENT_PSQL_USERNAME
-                  value: postgres
-                - name: EVENT_PSQL_ADDR
-                  value: "psql-reporting.default.svc.cluster.local"
-                - name: EVENT_PSQL_PASSWORD
-                  valueFrom:
-                    secretKeyRef:
-                      name: reporting-psql
-                      key: password
-          volumes:
-            - name: keycloak-creds
-              csi:
-                driver: identity.keycloak.org
-                volumeAttributes:
-                  clientID: profile-app
+# japiVersion: batch/v1
+# jkind: CronJob
+# jmetadata:
+# j  name: visit-check-job
+# jspec:
+# j  schedule: "0 5 * * *"
+# j  jobTemplate:
+# j    spec:
+# j      backoffLimit: 4
+# j      template:
+# j        spec:
+# j          nodeName: supermicro1
+# j          restartPolicy: Never
+# j          containers:
+# j            - name: job
+# j              imagePullPolicy: IfNotPresent
+# j              image: profile-visit-check-job
+# j              volumeMounts:
+# j                - name: keycloak-creds
+# j                  mountPath: /var/lib/keycloak
+# j              env:
+# j                - name: SELF_URL
+# j                  value: https://profile.thelab.ms
+# j                - name: KEYCLOAK_URL
+# j                  value: http://keycloak.default.svc.cluster.local
+# j                - name: KEYCLOAK_MEMBERS_GROUP_ID
+# j                  value: 4eea9c17-f9b1-41eb-8f25-721ae04b66f6
+# j                - name: EVENT_PSQL_USERNAME
+# j                  value: postgres
+# j                - name: EVENT_PSQL_ADDR
+# j                  value: "psql-reporting.default.svc.cluster.local"
+# j                - name: EVENT_PSQL_PASSWORD
+# j                  valueFrom:
+# j                    secretKeyRef:
+# j                      name: reporting-psql
+# j                      key: password
+# j          volumes:
+# j            - name: keycloak-creds
+# j              csi:
+# j                driver: identity.keycloak.org
+# j                volumeAttributes:
+# j                  clientID: profile-app
 
 ---
 apiVersion: batch/v1
@@ -319,6 +319,13 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: discord-token
+                  key: token
+            - name: CONWAY_URL
+              value: "https://members.thelab.ms"
+            - name: CONWAY_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: conway-token
                   key: token
           readinessProbe:
             initialDelaySeconds: 2

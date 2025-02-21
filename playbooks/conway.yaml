@@ -1,0 +1,69 @@
+- name: Conway
+  hosts: cloud
+  tasks:
+   - name: Create Podman network
+     containers.podman.podman_network:
+       name: thelab-overlay
+       ip_range: 10.201.1.0/24
+       subnet: 10.201.1.0/24
+       gateway: 10.201.1.1
+
+   - name: Copy Conway binary
+     notify: ["Restart Conway"]
+     ansible.builtin.copy:
+       src: "{{ playbook_dir }}/../../conway/build/conway"
+       dest: /usr/bin/conway
+       owner: root
+       group: root
+       mode: '0755'
+
+   - name: Create Conway directory
+     ansible.builtin.file:
+       path: /opt/conway
+       state: directory
+
+   - name: Create the Conway container unit 
+     notify: ["Restart Conway"]
+     containers.podman.podman_container:
+       name: conway
+       image: ubuntu:latest
+       state: quadlet
+       workdir: /opt/conway
+       net: thelab-overlay
+       command:
+        - /usr/bin/conway
+       env_file: /etc/default/conway # contains secrets
+       env:
+         SELF_URL: "https://members.thelab.ms"
+         CONWAY_SMTP_ADDR: "smtp.gmail.com:587"
+         CONWAY_SMTP_FROM: "thelab.ms"
+         CONWAY_SMTP_USER: "noreply-logins@thelab.ms"
+         CONWAY_SPACE_HOST: "space.thelab.ms"
+       volumes:
+        - /usr/bin/conway:/usr/bin/conway
+        - /opt/conway:/opt/conway
+        - /etc/ssl:/etc/ssl
+       publish:
+          - "8080:8080"
+       quadlet_options:
+         - |
+           [Service]
+           Restart=always
+           RestartSec=2
+         - |
+           [Install]
+           WantedBy=default.target
+
+   - name: Start Conway
+     ansible.builtin.systemd:
+       name: conway
+       enabled: true
+       state: started
+       daemon_reload: true
+
+  handlers:
+    - name: Restart Conway
+      ansible.builtin.service:
+        name: conway
+        state: restarted
+
