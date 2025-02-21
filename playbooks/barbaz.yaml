@@ -1,0 +1,176 @@
+- name: foobar.thelab.ms
+  hosts: cloud
+  tasks:
+    - name: Write motd
+      ansible.builtin.template:
+        src: motd.j2
+        dest: /etc/motd
+
+    - name: Install Podman
+      package:
+        name: "podman"
+        state: present
+
+    - name: Create Podman network
+      containers.podman.podman_network:
+        name: thelab-overlay
+        ip_range: 10.201.1.0/24
+        subnet: 10.201.1.0/24
+        gateway: 10.201.1.1
+
+    - name: Create Frigate media directory
+      ansible.builtin.file:
+        path: /opt/frigate
+        state: directory
+
+    - name: Create Frigate config directory
+      ansible.builtin.file:
+        path: /etc/frigate
+        state: directory
+
+    - name: Write Frigate config
+      notify: ["Restart Frigate"]
+      ansible.builtin.template:
+        src: frigate-config.yaml.j2
+        dest: /etc/frigate/config.yaml
+
+    - name: Create the Frigate container unit
+      notify: ["Restart Frigate"]
+      containers.podman.podman_container:
+        name: frigate
+        image: ghcr.io/blakeblackshear/frigate:0.14.0
+        state: quadlet
+        net: thelab-overlay
+        device: "/dev/dri/card0:/dev/dri/card0"
+        privileged: true
+        volumes:
+          - /etc/frigate:/config
+          - /opt/frigate:/media/frigate
+        mounts:
+          - type=tmpfs,target=/tmp/cache,tmpfs-size=2000000000
+        shm_size: "64mb"
+        quadlet_options:
+          - |
+            [Service]
+            Restart=always
+            RestartSec=2
+          - |
+            [Install]
+            WantedBy=default.target
+
+    - name: Start Frigate
+      ansible.builtin.systemd:
+        name: frigate
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Create the oauth2proxy container unit
+      notify: ["Restart Oauth2proxy"]
+      containers.podman.podman_container:
+        name: oauth2proxy-frigate
+        image: quay.io/oauth2-proxy/oauth2-proxy:v7.8.1
+        net: thelab-overlay
+        state: quadlet
+        command:
+          - oauth2proxy
+          - --upstream=http://frigate:8971
+          - --email-domain=*
+          - --allowed-group=admin
+          - --client-id=frigate
+          - --client-secret=anything
+          - --provider=oidc
+          - --oidc-issuer-url=https://members.thelab.ms
+          - --cookie-secret=bo7gQojf3MM27od897EwXqM6PgRSRasOP63r9r_sgxw= # this isn't particularly sensitive - the tokens it encrypts are low-trust anyway
+          - --http-address=:8081
+          - --skip-provider-button
+        publish:
+          - "8081:8081"
+        quadlet_options:
+          - |
+            [Service]
+            Restart=always
+            RestartSec=2
+          - |
+            [Install]
+            WantedBy=default.target
+
+    - name: Start oauth2proxy
+      ansible.builtin.systemd:
+        name: oauth2proxy-frigate
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    - name: Get API token from Conway
+      ansible.builtin.shell: 'echo "GLIDER_CONWAY_TOKEN=$(sqlite3 /opt/conway/conway.sqlite3 "SELECT token FROM api_tokens ORDER BY id DESC LIMIT 1")"'
+      register: token_output
+      delegate_to: foobar.thelab.ms
+
+    - name: Copy API token to Glider host
+      ansible.builtin.copy:
+        content: "{{ token_output.stdout }}"
+        dest: /etc/default/glider
+
+    - name: Copy Glider binary
+      notify: ["Restart Glider"]
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../../conway/build/glider"
+        dest: /usr/bin/glider
+        owner: root
+        group: root
+        mode: "0755"
+
+    - name: Create Glider directory
+      ansible.builtin.file:
+        path: /opt/glider
+        state: directory
+
+    - name: Create the Glider container unit
+      notify: ["Restart Glider"]
+      containers.podman.podman_container:
+        name: glider
+        image: ubuntu:latest
+        state: quadlet
+        workdir: /opt/glider
+        net: thelab-overlay
+        command:
+          - /usr/bin/glider
+        env_file: /etc/default/glider # contains secrets
+        env:
+          GLIDER_CONWAY_URL: https://members.thelab.ms
+        volumes:
+          - /usr/bin/glider:/usr/bin/glider
+          - /opt/glider:/opt/glider
+          - /etc/ssl:/etc/ssl
+        quadlet_options:
+          - |
+            [Service]
+            Restart=always
+            RestartSec=2
+          - |
+            [Install]
+            WantedBy=default.target
+
+    - name: Start Glider
+      ansible.builtin.systemd:
+        name: glider
+        enabled: true
+        state: started
+        daemon_reload: true
+
+  handlers:
+    - name: Restart Frigate
+      ansible.builtin.service:
+        name: frigate
+        state: restarted
+
+    - name: Restart Oauth2proxy
+      ansible.builtin.service:
+        name: oauth2proxy-frigate
+        state: restarted
+
+    - name: Restart Glider
+      ansible.builtin.service:
+        name: glider
+        state: restarted
