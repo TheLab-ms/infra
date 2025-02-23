@@ -139,6 +139,7 @@
         env_file: /etc/default/glider # contains secrets
         env:
           GLIDER_CONWAY_URL: https://members.thelab.ms
+          GLIDER_ACCESS_CONTROLLER_HOST: 10.220.4.5:80
         volumes:
           - /usr/bin/glider:/usr/bin/glider
           - /opt/glider:/opt/glider
