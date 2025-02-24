@@ -20,7 +20,7 @@
 
     - name: Create Frigate media directory
       ansible.builtin.file:
-        path: /opt/frigate
+        path: /mnt/data/frigate
         state: directory
 
     - name: Create Frigate config directory
@@ -45,7 +45,7 @@
         privileged: true
         volumes:
           - /etc/frigate:/config
-          - /opt/frigate:/media/frigate
+          - /mnt/data/frigate:/media/frigate
         mounts:
           - type=tmpfs,target=/tmp/cache,tmpfs-size=2000000000
         shm_size: "64mb"
@@ -160,6 +160,37 @@
         state: started
         daemon_reload: true
 
+    - name: Create NAS directory
+      ansible.builtin.file:
+        path: /mnt/data/nas
+        state: directory
+
+    - name: Create the NAS Samba container unit
+      notify: ["Restart NAS"]
+      containers.podman.podman_container:
+        name: samba
+        image: ghcr.io/thelab-ms/samba:sha-4e8f77b
+        state: quadlet
+        net: host
+        command: ["/usr/bin/samba.sh", "-p", "-r", "-s", "TheLabNAS;/share;yes;no;yes;all;all;all"]
+        volumes:
+          - /mnt/data/nas:/share
+        quadlet_options:
+          - |
+            [Service]
+            Restart=always
+            RestartSec=2
+          - |
+            [Install]
+            WantedBy=default.target
+
+    - name: Start NAS
+      ansible.builtin.systemd:
+        name: samba
+        enabled: true
+        state: started
+        daemon_reload: true
+
   handlers:
     - name: Restart Frigate
       ansible.builtin.service:
@@ -174,4 +205,9 @@
     - name: Restart Glider
       ansible.builtin.service:
         name: glider
+        state: restarted
+
+    - name: Restart NAS
+      ansible.builtin.service:
+        name: samba
         state: restarted
