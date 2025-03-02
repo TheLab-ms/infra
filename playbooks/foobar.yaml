@@ -45,14 +45,14 @@
         env_file: /etc/default/conway # contains secrets
         env:
           SELF_URL: "https://members.thelab.ms"
-          CONWAY_SMTP_ADDR: "smtp.gmail.com:587"
-          CONWAY_SMTP_FROM: "thelab.ms"
-          CONWAY_SMTP_USER: "noreply-logins@thelab.ms"
+          GOOGLE_APPLICATION_CREDENTIALS: /opt/conway/google.json # populate with service account creds from gcloud api console
+          CONWAY_EMAIL_FROM: "noreply-logins@thelab.ms"
           CONWAY_SPACE_HOST: "space.thelab.ms"
         volumes:
           - /usr/bin/conway:/usr/bin/conway
           - /opt/conway:/opt/conway
           - /etc/ssl:/etc/ssl
+          - /usr/share/zoneinfo:/usr/share/zoneinfo
         publish:
           - "8080:8080"
         quadlet_options:

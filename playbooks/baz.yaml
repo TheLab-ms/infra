@@ -102,16 +102,6 @@
         state: started
         daemon_reload: true
 
-    - name: Get API token from Conway
-      ansible.builtin.shell: 'echo "GLIDER_CONWAY_TOKEN=$(sqlite3 /opt/conway/conway.sqlite3 "SELECT token FROM api_tokens ORDER BY id DESC LIMIT 1")"'
-      register: token_output
-      delegate_to: foobar.thelab.ms
-
-    - name: Copy API token to Glider host
-      ansible.builtin.copy:
-        content: "{{ token_output.stdout }}"
-        dest: /etc/default/glider
-
     - name: Copy Glider binary
       notify: ["Restart Glider"]
       ansible.builtin.copy:
