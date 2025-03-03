@@ -134,6 +134,7 @@
           - /usr/bin/glider:/usr/bin/glider
           - /opt/glider:/opt/glider
           - /etc/ssl:/etc/ssl
+          - /usr/share/zoneinfo:/usr/share/zoneinfo
         quadlet_options:
           - |
             [Service]
