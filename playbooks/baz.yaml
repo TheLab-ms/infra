@@ -38,7 +38,7 @@
       notify: ["Restart Frigate"]
       containers.podman.podman_container:
         name: frigate
-        image: ghcr.io/blakeblackshear/frigate:0.14.0
+        image: ghcr.io/blakeblackshear/frigate:0.15.0
         state: quadlet
         net: thelab-overlay
         device: "/dev/dri/card0:/dev/dri/card0"

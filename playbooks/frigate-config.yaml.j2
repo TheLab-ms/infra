@@ -5,12 +5,6 @@ mqtt:
 tls:
   enabled: false
 
-record:
-  enabled: true
-  retain:
-    days: 7
-    mode: motion
-
 auth:
   enabled: false
 
@@ -18,14 +12,39 @@ proxy:
   header_map:
     user: x-forwarded-user
 
+record:
+  enabled: True
+  alerts:
+    retain:
+      days: 14
+      mode: active_objects
+
 motion:
   frame_height: 25
+  threshold: 20
 
 detect:
-  enabled: false
+  enabled: true
   width: 640
   height: 360
   fps: 1
+
+detectors:
+  ov:
+    type: openvino
+    device: CPU
+
+model:
+  width: 300
+  height: 300
+  input_tensor: nhwc
+  input_pixel_format: bgr
+  path: /openvino-model/ssdlite_mobilenet_v2.xml
+  labelmap_path: /openvino-model/coco_91cl_bkgr.txt
+
+review:
+  alerts:
+    labels: []
 
 cameras:
   Vent:
