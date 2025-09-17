@@ -8,3 +8,6 @@ foobar:
 baz:
 	ansible-playbook -i ansible-inventory -l baz.thelab.ms playbooks/baz.yaml
 
+labpi:
+	ansible-playbook -i ansible-inventory -l labpi.thelab.ms playbooks/labpi.yaml
+
