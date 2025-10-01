@@ -1,3 +1,14 @@
+# Provisioning notes:
+# - Local-only password is "thelab.ms" in case all trusted ssh keys are lost
+# - Use testing channel to get new enough version of Podman for quadlets
+# - Nothing fancy about the image: just bookworm written to the SSD by the official RPI imager
+
+# TODO:
+# - NAS
+# - Conway
+# - Tunneling
+# - Backups
+
 - name: labpi.thelab.ms
   hosts: labpi.thelab.ms
   handlers:
@@ -16,9 +27,53 @@
         name: "podman"
         state: present
 
-    - name: Create Podman network
-      containers.podman.podman_network:
-        name: thelab-overlay
-        ip_range: 10.202.1.0/24
-        subnet: 10.202.1.0/24
-        gateway: 10.202.1.1
+    # -------------------------------------------- FRIGATE
+    - name: Create Frigate media directory
+      ansible.builtin.file:
+        path: /opt/frigate
+        state: directory
+
+    - name: Create Frigate config directory
+      ansible.builtin.file:
+        path: /etc/frigate
+        state: directory
+
+    - name: Write Frigate config
+      notify: ["Restart Frigate"]
+      ansible.builtin.template:
+        src: rpi-frigate-config.yaml.j2
+        dest: /etc/frigate/config.yaml
+
+    - name: Create the Frigate container unit
+      notify: ["Restart Frigate"]
+      containers.podman.podman_container:
+        name: frigate
+        image: ghcr.io/blakeblackshear/frigate:0.15.0
+        state: quadlet
+        ports:
+          - "80:5000"
+        device:
+          - "/dev/dri:/dev/dri"
+        privileged: true
+        volumes:
+          - /etc/frigate:/config
+          - /opt/frigate:/media/frigate
+        mounts:
+          - type=tmpfs,target=/tmp/cache,tmpfs-size=2000000000
+        shm_size: "512mb"
+        quadlet_options:
+          - |
+            [Service]
+            Restart=always
+            RestartSec=2
+          - |
+            [Install]
+            WantedBy=default.target
+
+    - name: Start Frigate
+      ansible.builtin.systemd:
+        name: frigate
+        enabled: true
+        state: started
+        daemon_reload: true
+
