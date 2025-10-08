@@ -6,10 +6,35 @@
         src: motd.j2
         dest: /etc/motd
 
-    - name: Install Podman
+    - name: Install packages
       package:
-        name: "podman"
+        name: ["podman", "wireguard"]
         state: present
+
+    - name: Gen wireguard keys
+      notify: ["Restart Wireguard"]
+      ansible.builtin.command:
+        cmd: /bin/sh -c 'wg genkey > /opt/wireguard-priv'
+        creates: /opt/wireguard-priv
+
+    - name: Retrieve Wireguard key
+      ansible.builtin.slurp:
+        src: /opt/wireguard-priv
+      register: wgpriv
+
+    - name: Write Wireguard config
+      notify: ["Restart Wireguard"]
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/wireguard.conf"
+        dest: /etc/wireguard/wg0.conf
+        mode: 0600
+
+    - name: Start Wireguard
+      ansible.builtin.systemd:
+        name: wg-quick@wg0
+        enabled: true
+        state: started
+        daemon_reload: true
 
     - name: Create Podman network
       containers.podman.podman_network:
@@ -121,4 +146,9 @@
     - name: Restart Dokuwiki
       ansible.builtin.service:
         name: dokuwiki
+        state: restarted
+
+    - name: Restart Wireguard
+      ansible.builtin.service:
+        name: wg-quick@wg0
         state: restarted

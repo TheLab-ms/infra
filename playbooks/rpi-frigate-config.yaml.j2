@@ -11,16 +11,14 @@ auth:
 
 record:
   enabled: true
-  alerts:
-    retain:
-      days: 7
-      mode: motion
-
-motion:
-  frame_height: 25
-  threshold: 20
+  retain:
+    days: 7
+    mode: all
 
 detect:
+  enabled: false
+
+motion:
   enabled: false
 
 review:
