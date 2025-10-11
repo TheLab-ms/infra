@@ -80,6 +80,10 @@
           - /usr/share/zoneinfo:/usr/share/zoneinfo
         publish:
           - "8080:8080"
+        healthcheck: /usr/bin/conway healthcheck
+        healthcheck_timeout: 4s
+        healthcheck_interval: 10s
+        healthcheck_failure_action: restart
         quadlet_options:
           - |
             [Service]
