@@ -46,7 +46,7 @@
     - name: Copy Conway binary
       notify: ["Restart Conway"]
       ansible.builtin.copy:
-        src: "{{ playbook_dir }}/../../conway/build/conway"
+        src: "{{ playbook_dir }}/../../conway/conway"
         dest: /usr/bin/conway
         owner: root
         group: root

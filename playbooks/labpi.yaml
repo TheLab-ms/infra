@@ -3,18 +3,16 @@
 # - Use testing channel to get new enough version of Podman for quadlets
 # - Nothing fancy about the image: just bookworm written to the SSD by the official RPI imager
 
-# TODO:
-# - NAS
-# - Conway
-# - Tunneling
-# - Backups
-
 - name: labpi.thelab.ms
   hosts: labpi.thelab.ms
   handlers:
     - name: Restart Frigate
       ansible.builtin.service:
         name: frigate
+        state: restarted
+    - name: Restart Samba
+      ansible.builtin.service:
+        name: samba
         state: restarted
   tasks:
     - name: Write motd
@@ -91,6 +89,44 @@
     - name: Start Frigate
       ansible.builtin.systemd:
         name: frigate
+        enabled: true
+        state: started
+        daemon_reload: true
+
+    # -------------------------------------------- NAS
+    - name: Create NAS directory
+      ansible.builtin.file:
+        path: /opt/nas
+        state: directory
+
+    - name: Create the Samba container unit
+      notify: ["Restart Samba"]
+      containers.podman.podman_container:
+        name: samba
+        image: ghcr.io/servercontainers/samba:latest
+        state: quadlet
+        env:
+          SAMBA_VOLUME_CONFIG: "public;/shares/public;yes;yes;yes;all;none"
+        ports:
+          - "445:445"
+          - "139:139"
+        volumes:
+          - /opt/nas:/shares/public
+        mounts:
+          - type=tmpfs,target=/tmp/cache,tmpfs-size=2000000000
+        shm_size: "512mb"
+        quadlet_options:
+          - |
+            [Service]
+            Restart=always
+            RestartSec=2
+          - |
+            [Install]
+            WantedBy=default.target
+
+    - name: Start NAS
+      ansible.builtin.systemd:
+        name: samba
         enabled: true
         state: started
         daemon_reload: true
