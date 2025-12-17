@@ -61,7 +61,7 @@
       notify: ["Restart Conway"]
       containers.podman.podman_container:
         name: conway
-        image: ubuntu:latest
+        image: ghcr.io/thelab-ms/infra/ubuntu:f9a343a
         state: quadlet
         workdir: /opt/conway
         net: thelab-overlay
