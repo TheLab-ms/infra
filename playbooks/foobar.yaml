@@ -73,6 +73,7 @@
           GOOGLE_APPLICATION_CREDENTIALS: /opt/conway/google.json # populate with service account creds from gcloud api console
           CONWAY_EMAIL_FROM: "noreply-logins@thelab.ms"
           CONWAY_SPACE_HOST: "space.thelab.ms"
+          CONWAY_DISCORD_PRINT_CHANNEL: "printing"
         volumes:
           - /usr/bin/conway:/usr/bin/conway
           - /opt/conway:/opt/conway
