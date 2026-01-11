@@ -72,6 +72,7 @@
           SELF_URL: "https://members.thelab.ms"
           GOOGLE_APPLICATION_CREDENTIALS: /opt/conway/google.json # populate with service account creds from gcloud api console
           CONWAY_EMAIL_FROM: "noreply-logins@thelab.ms"
+          CONWAY_EMAIL_SENDER_NAME: "TheLab Makerspace"
           CONWAY_SPACE_HOST: "space.thelab.ms"
           CONWAY_DISCORD_PRINT_CHANNEL: "printing"
         volumes:
