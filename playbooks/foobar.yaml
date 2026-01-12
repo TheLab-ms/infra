@@ -74,7 +74,6 @@
           CONWAY_EMAIL_FROM: "noreply-logins@thelab.ms"
           CONWAY_EMAIL_SENDER_NAME: "TheLab Makerspace"
           CONWAY_SPACE_HOST: "space.thelab.ms"
-          CONWAY_DISCORD_PRINT_CHANNEL: "printing"
         volumes:
           - /usr/bin/conway:/usr/bin/conway
           - /opt/conway:/opt/conway
