@@ -1,3 +1,12 @@
+# Provisioning notes:
+# - Azure Standard_B1s running Ubuntu 24.04 in southcentralus.
+# - Enable daily Azure backups during provisioning.
+# - Manually populate IP in Cloudflare dns record (foobar.thelab.ms)
+# - The cto user should trust the current acting CTO's ssh pubkey. It can always be updated through the Azure portal.
+# - Manually install cloudflared for tunneling. It would be hard to automate, very easy to do by hand.
+#   - Make sure to run as a service i.e. `cloudflared service install`
+# - Run `make foobar` in the infra repo
+
 - name: foobar.thelab.ms
   hosts: foobar.thelab.ms
   tasks:
