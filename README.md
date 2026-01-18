@@ -1,5 +1,7 @@
 # Infra
 
+This repo contains documentation and scripts related to TheLab Makerspace's IT infrastructure.
+
 
 ## Usage
 
