@@ -11,19 +11,6 @@ This repo contains documentation and scripts related to TheLab Makerspace's IT i
 - `make labpi`: run Ansible against labpi.thelab.ms (onprem server)
 
 
-## Cloudflare
-
-We use Cloudflare for various things including (most importantly) DNS. The account is associated with cto@thelab.ms, so new CTOs should go reset the password to get access. Things don't change often in this account but it's worth knowing that it exists.
-
-Cloudflare tunnels are used for all ingress to our servers - no need to worry about rotating TLS certs, free DDoS protection, etc.
-
-
-## Monitoring
-
-We have a shared cronitor account used for uptime checks.
-Failing checks are posted to #it and visible publicly at https://status.thelab.ms
-
-
 ## Network
 
 ### Hardware
@@ -66,4 +53,16 @@ Router:
 - IoT can reach Conway through the VPN without auth
 - No other subnets can reach the Conway loopback
 - Only the admin subnet can route to the iot subnet
+
+
+## Cloudflare
+
+We use Cloudflare as the `thelab.ms` nameserver, and Cloudflare tunnels for all ingress to our services - Conway and dokuwiki.
+There's a shared account associated with cto@thelab.ms.
+
+
+## Monitoring
+
+Like Cloudflare, there's a shared Cronitor account for uptime checks.
+Failing checks are posted to #it and visible publicly at https://status.thelab.ms
 
