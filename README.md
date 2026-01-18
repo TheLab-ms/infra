@@ -39,3 +39,29 @@ Plus an RPI 5 for Frigate, etc. (labpi.thelab.ms)
 - Admin:   10.200.10.0/24
 - VPN:     10.13.13.2/24
 
+### Port Assignments
+
+Switch:
+
+- 01-11: IoT VLAN
+- 42-43: LACP router trunk
+- 44-47: Admin VLAN
+- else:  Members VLAN
+
+Router:
+
+- 1: uplink
+- 2: unused (members vlan)
+- 3-4: LACP router trunk
+- 5: labpi
+- 6: Rack AP
+- 7: Entry AP
+- 8: unused (admin vlan)
+
+### Firewall Rules
+
+- IoT can't route out to the internet
+- IoT can reach Conway through the VPN without auth
+- No other subnets can reach the Conway loopback
+- Only the admin subnet can route to the iot subnet
+
