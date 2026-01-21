@@ -2,6 +2,7 @@
 # - Local-only password is "thelab.ms" in case all trusted ssh keys are lost
 # - Use testing channel to get new enough version of Podman for quadlets
 # - Nothing fancy about the image: just bookworm written to the SSD by the official RPI imager
+# - Create /etc/rclone.conf with creds to access the "thelabbackups" Azure storage account
 
 - name: labpi.thelab.ms
   hosts: labpi.thelab.ms
@@ -13,6 +14,10 @@
     - name: Restart Samba
       ansible.builtin.service:
         name: samba
+        state: restarted
+    - name: Restart helmetfs
+      ansible.builtin.service:
+        name: helmetfs
         state: restarted
   tasks:
     - name: Write motd
@@ -132,3 +137,39 @@
         state: started
         daemon_reload: true
 
+    # -------------------------------------------- HELMETFS
+    - name: Create helmetfs data directory
+      ansible.builtin.file:
+        path: /opt/helmetfs
+        state: directory
+
+    - name: Create the helmetfs container unit
+      notify: ["Restart helmetfs"]
+      containers.podman.podman_container:
+        name: helmetfs
+        image: ghcr.io/jveski/helmetfs:0.0.4
+        state: quadlet
+        ports:
+          - "8080:8080"
+        workdir: /opt/helmetfs
+        volumes:
+          - /opt/helmetfs:/opt/helmetfs
+          - /etc/rclone.conf:/root/.config/rclone/rclone.conf:ro
+        command:
+          - "-rclone-remote=azureblob:helmetfs/"
+          - "-rclone-bwlimit=30M"
+        quadlet_options:
+          - |
+            [Service]
+            Restart=always
+            RestartSec=2
+          - |
+            [Install]
+            WantedBy=default.target
+
+    - name: Start helmetfs
+      ansible.builtin.systemd:
+        name: helmetfs
+        enabled: true
+        state: started
+        daemon_reload: true
