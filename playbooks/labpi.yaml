@@ -147,7 +147,7 @@
       notify: ["Restart helmetfs"]
       containers.podman.podman_container:
         name: helmetfs
-        image: ghcr.io/jveski/helmetfs:0.0.4
+        image: ghcr.io/jveski/helmetfs:0.0.8
         state: quadlet
         ports:
           - "8080:8080"
