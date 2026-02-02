@@ -26,7 +26,7 @@ Plus an RPI 5 for Frigate, etc. (labpi.thelab.ms)
 - Members: 10.200.1.0/24
 - IoT      10.200.2.0/24
 - Admin:   10.200.10.0/24
-- VPN:     10.13.13.2/24
+- VPN:     10.13.13.0/24
 
 ### Port Assignments
 
@@ -52,7 +52,8 @@ Router:
 - IoT can't route out to the internet
 - IoT can reach Conway through the VPN without auth
 - No other subnets can reach the Conway loopback
-- Only the admin subnet can route to the iot subnet
+- Only the admin and vpn subnets can route to the iot subnet
+- Only the admin and vpn subnets can reach the router and switch management endpoints
 
 
 ## Cloudflare
