@@ -51,14 +51,14 @@ cameras:
           roles:
             - record
 
-#   Crafting:
-#     ffmpeg:
-#       hwaccel_args: preset-rpi-64-h264
-#       inputs:
-#         - path: rtsp://10.200.2.16:554/Streaming/Channels/102
-#           roles:
-#             - detect
-#         - path: rtsp://10.200.2.16:554/Streaming/Channels/101
-#           roles:
-#             - record
+  ITRoom:
+    ffmpeg:
+      hwaccel_args: preset-rpi-64-h264
+      inputs:
+        - path: rtsp://10.200.2.8:554/Streaming/Channels/102
+          roles:
+            - detect
+        - path: rtsp://10.200.2.8:554/Streaming/Channels/101
+          roles:
+            - record
 
