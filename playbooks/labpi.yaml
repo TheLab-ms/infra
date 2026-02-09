@@ -30,6 +30,13 @@
         name: "podman"
         state: present
 
+    - name: Create Podman network
+      containers.podman.podman_network:
+        name: thelab-overlay
+        ip_range: 10.200.100.0/24
+        subnet: 10.200.100.0/24
+        gateway: 10.200.100.1
+
     # -------------------------------------------- NAS
     - name: Create NAS directory
       ansible.builtin.file:
@@ -80,6 +87,11 @@
         path: /etc/frigate
         state: directory
 
+    - name: Frigate nginx conf
+      ansible.builtin.copy:
+        src: frigate-nginx.conf
+        dest: /etc/frigate-nginx.conf
+
     - name: Write Frigate config
       notify: ["Restart Frigate"]
       ansible.builtin.template:
@@ -92,8 +104,10 @@
         name: frigate
         image: ghcr.io/blakeblackshear/frigate:0.15.0
         state: quadlet
-        ports:
-          - "80:5000"
+        net: thelab-overlay
+        ip: 10.200.100.6
+        cap_add:
+          - CAP_NET_BIND_SERVICE
         device:
           - "/dev/video19:/dev/video19"
           - "/dev/video20:/dev/video20"
@@ -118,6 +132,7 @@
         volumes:
           - /etc/frigate:/config
           - /opt/frigate:/media/frigate
+          - /etc/frigate-nginx.conf:/usr/local/nginx/conf/nginx.conf
         mounts:
           - type=tmpfs,target=/tmp/cache,tmpfs-size=2000000000
         shm_size: "512mb"
@@ -147,15 +162,18 @@
       notify: ["Restart helmetfs"]
       containers.podman.podman_container:
         name: helmetfs
-        image: ghcr.io/jveski/helmetfs:0.0.10
+        image: ghcr.io/jveski/helmetfs:0.0.12
         state: quadlet
-        ports:
-          - "8080:8080"
+        net: thelab-overlay
+        ip: 10.200.100.5
+        cap_add:
+          - CAP_NET_BIND_SERVICE
         workdir: /opt/helmetfs
         volumes:
           - /opt/helmetfs:/opt/helmetfs
           - /etc/rclone.conf:/root/.config/rclone/rclone.conf:ro
         command:
+          - "-addr=:80"
           - "-rclone-remote=azureblob:helmetfs/"
           - "-rclone-bwlimit=30M"
         quadlet_options:
