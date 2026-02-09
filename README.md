@@ -15,8 +15,8 @@ This repo contains documentation and scripts related to TheLab Makerspace's IT i
 
 ### Hardware
 
-- Router: `MikroTik RB5009UPr+S+` (10.200.10.1)
-- Switch: `Aruba S2500-48P` (10.200.10.2)
+- Router: `MikroTik RB5009UPr+S+` (router.thelab.ms/10.200.10.1)
+- Switch: `Aruba S2500-48P` (switch.thelab.ms/10.200.10.2)
 - APs: `MikroTik RBcAPGi-5acD2nD` (x3)
 
 Plus an RPI 5 for Frigate, etc. (labpi.thelab.ms)

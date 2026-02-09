@@ -123,7 +123,7 @@
       notify: ["Restart helmetfs"]
       containers.podman.podman_container:
         name: helmetfs
-        image: ghcr.io/jveski/helmetfs:0.0.13
+        image: ghcr.io/jveski/helmetfs:0.0.14
         state: quadlet
         net: thelab-overlay
         ip: 10.200.100.5
