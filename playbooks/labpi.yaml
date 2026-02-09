@@ -37,45 +37,6 @@
         subnet: 10.200.100.0/24
         gateway: 10.200.100.1
 
-    # -------------------------------------------- NAS
-    - name: Create NAS directory
-      ansible.builtin.file:
-        path: /opt/nas
-        state: directory
-
-    - name: Write Samba config
-      ansible.builtin.template:
-        src: smb.conf
-        dest: /etc/smb.conf
-
-    - name: Create the Samba container unit
-      notify: ["Restart Samba"]
-      containers.podman.podman_container:
-        name: samba
-        image: ghcr.io/servercontainers/samba:latest
-        state: quadlet
-        ports:
-          - "445:445"
-          - "139:139"
-        volumes:
-          - /opt/nas:/shares/nas
-          - /etc/smb.conf:/etc/samba/smb.conf
-        quadlet_options:
-          - |
-            [Service]
-            Restart=always
-            RestartSec=2
-          - |
-            [Install]
-            WantedBy=default.target
-
-    - name: Start NAS
-      ansible.builtin.systemd:
-        name: samba
-        enabled: true
-        state: started
-        daemon_reload: true
-
     # -------------------------------------------- FRIGATE
     - name: Create Frigate media directory
       ansible.builtin.file:
@@ -162,7 +123,7 @@
       notify: ["Restart helmetfs"]
       containers.podman.podman_container:
         name: helmetfs
-        image: ghcr.io/jveski/helmetfs:0.0.12
+        image: ghcr.io/jveski/helmetfs:0.0.13
         state: quadlet
         net: thelab-overlay
         ip: 10.200.100.5
